@@ -1,34 +1,43 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { isMember, requireProjectMember } from "@/lib/auth-helpers";
+import type { NextRequest } from "next/server";
+import { taskService } from "@/src/modules/tasks/task.service";
+import { createTaskSchema } from "@/src/modules/tasks/task.schema";
+import { withMiddleware, createdResponse } from "@/lib/http";
+import { assertProjectMember } from "@/lib/auth-helpers";
+import { ApiErrors } from "@/lib/middlewares";
 
-export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const body = await req.json();
-  const { projectId, title, type, status, startDate, dueDate, description } = body;
-
-  if (!projectId || !title) return NextResponse.json({ error: "projectId and title required" }, { status: 400 });
-
-  const member = await requireProjectMember(projectId, session.user.id);
-  if (!isMember(member)) return member;
-
-  const task = await db.task.create({
-    data: {
-      projectId,
-      title,
-      type: type || "dev",
-      status: status || "idea",
-      startDate: startDate ? new Date(startDate) : null,
-      dueDate: dueDate ? new Date(dueDate) : null,
-      description: description || null,
+/**
+ * @openapi
+ * /api/tasks:
+ *   post:
+ *     tags: [Tasks]
+ *     summary: Create a task
+ *     security:
+ *       - CookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateTaskRequest'
+ *     responses:
+ *       201:
+ *         description: Created task
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ */
+export function POST(req: NextRequest) {
+  return withMiddleware(
+    async (_r, context) => {
+      const validated = createTaskSchema.parse((_r as any).__validatedBody);
+      await assertProjectMember(validated.projectId, String(context.user!.id));
+      
+      const task = await taskService.createTask(validated);
+      return createdResponse(task);
     },
-    include: {
-      assignees: { include: { user: { select: { id: true, name: true, image: true } } } },
-    },
-  });
-
-  return NextResponse.json(task, { status: 201 });
+    { auth: true, validateBody: createTaskSchema }
+  )(req);
 }

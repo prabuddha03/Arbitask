@@ -5,7 +5,7 @@
  * These settings can be overridden via environment variables
  */
 
-import type { Prisma } from "./generated/prisma/client";
+import type { Prisma } from "@prisma/client";
 
 type LogLevel = Prisma.LogLevel;
 

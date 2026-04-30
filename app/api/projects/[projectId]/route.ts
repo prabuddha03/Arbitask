@@ -1,49 +1,89 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { isMember, requireProjectAdmin } from "@/lib/auth-helpers";
+import type { NextRequest } from "next/server";
+import { projectService } from "@/src/modules/projects/project.service";
+import { updateProjectSchema } from "@/src/modules/projects/project.schema";
+import { withMiddleware, successResponse, noContentResponse } from "@/lib/http";
+import { assertProjectAdmin } from "@/lib/auth-helpers";
 import { Role } from "@/lib/constants";
+import { db } from "@/lib/db";
+import { ApiErrors } from "@/lib/middlewares";
+import { validateRequestBody } from "@/lib/validation/validation";
 
 type Params = { params: Promise<{ projectId: string }> };
 
-export async function PATCH(req: NextRequest, { params }: Params) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { projectId } = await params;
-
-  const member = await requireProjectAdmin(projectId, session.user.id);
-  if (!isMember(member)) return member;
-
-  const body = await req.json();
-  const project = await db.project.update({
-    where: { id: projectId },
-    data: {
-      name: body.name,
-      description: body.description,
-      colorId: body.colorId,
-      ...(body.status !== undefined && { status: body.status }),
-      ...(body.priority !== undefined && { priority: body.priority }),
-      ...(body.lead !== undefined && { lead: body.lead || null }),
-      ...(body.startDate !== undefined && { startDate: body.startDate ? new Date(body.startDate) : null }),
-      ...(body.targetDate !== undefined && { targetDate: body.targetDate ? new Date(body.targetDate) : null }),
+/**
+ * @openapi
+ * /api/projects/{projectId}:
+ *   patch:
+ *     tags: [Projects]
+ *     summary: Update a project (ADMIN or OWNER only)
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateProjectRequest'
+ *     responses:
+ *       200:
+ *         description: Updated project
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ */
+export function PATCH(req: NextRequest, { params }: Params) {
+  return withMiddleware(
+    async (r, context) => {
+      const { projectId } = await params;
+      await assertProjectAdmin(projectId, String(context.user!.id));
+      const validated = updateProjectSchema.parse((r as any).__validatedBody);
+      const updated = await projectService.updateProject(projectId, validated);
+      return successResponse(updated);
     },
-  });
-
-  return NextResponse.json(project);
+    { auth: true, validateBody: updateProjectSchema }
+  )(req);
 }
 
-export async function DELETE(_req: NextRequest, { params }: Params) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { projectId } = await params;
-
-  // Only owner can delete
-  const member = await db.projectMember.findUnique({
-    where: { projectId_userId: { projectId, userId: session.user.id } },
-  });
-  if (!member || member.role !== Role.OWNER)
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
-  await db.project.delete({ where: { id: projectId } });
-  return NextResponse.json({ ok: true });
+/**
+ * @openapi
+ * /api/projects/{projectId}:
+ *   delete:
+ *     tags: [Projects]
+ *     summary: Delete a project (OWNER only)
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Deleted
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ */
+export function DELETE(req: NextRequest, { params }: Params) {
+  return withMiddleware(
+    async (_r, context) => {
+      const { projectId } = await params;
+      const member = await db.projectMember.findUnique({
+        where: { projectId_userId: { projectId, userId: String(context.user!.id) } },
+      });
+      if (!member || member.role !== Role.OWNER) throw ApiErrors.Forbidden("Only the project owner can delete");
+      await projectService.deleteProject(projectId);
+      return noContentResponse();
+    },
+    { auth: true }
+  )(req);
 }

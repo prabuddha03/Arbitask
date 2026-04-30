@@ -34,6 +34,8 @@ export const ApiErrors = {
 
   Conflict: (message: string = "Resource already exists") => new ApiError(409, message, "CONFLICT"),
 
+  Gone: (message: string = "Resource is no longer available") => new ApiError(410, message, "GONE"),
+
   TooManyRequests: (message: string = "Too many requests", resetAt?: number) =>
     new ApiError(429, message, "TOO_MANY_REQUESTS", { resetAt }),
 

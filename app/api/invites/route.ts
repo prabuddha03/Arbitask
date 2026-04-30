@@ -1,33 +1,49 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { isMember, requireProjectAdmin } from "@/lib/auth-helpers";
-import { Role } from "@/lib/constants";
+import type { NextRequest } from "next/server";
+import { inviteService } from "@/src/modules/invites/invite.service";
+import { createInviteSchema } from "@/src/modules/invites/invite.schema";
+import { withMiddleware, createdResponse } from "@/lib/http";
+import { assertProjectAdmin } from "@/lib/auth-helpers";
+import { ApiErrors } from "@/lib/middlewares";
 
-export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const body = await req.json();
-  const { projectId, role } = body;
-
-  if (!projectId) return NextResponse.json({ error: "projectId required" }, { status: 400 });
-
-  const member = await requireProjectAdmin(projectId, session.user.id);
-  if (!isMember(member)) return member;
-
-  // Expire in 7 days
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 7);
-
-  const invite = await db.invite.create({
-    data: {
-      projectId,
-      senderId: session.user.id,
-      role: (role as Role) || Role.MEMBER,
-      expiresAt,
+/**
+ * @openapi
+ * /api/invites:
+ *   post:
+ *     tags: [Invites]
+ *     summary: Generate an invite link (ADMIN or OWNER only)
+ *     security:
+ *       - CookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [projectId]
+ *             properties:
+ *               projectId:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *                 enum: [ADMIN, MEMBER, VIEWER]
+ *                 default: MEMBER
+ *     responses:
+ *       201:
+ *         description: Invite token
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ */
+export function POST(req: NextRequest) {
+  return withMiddleware(
+    async (_r, context) => {
+      const validated = createInviteSchema.parse((_r as any).__validatedBody);
+      await assertProjectAdmin(validated.projectId, String(context.user!.id));
+      
+      const result = await inviteService.createInvite(validated, String(context.user!.id));
+      return createdResponse(result);
     },
-  });
-
-  return NextResponse.json({ token: invite.token }, { status: 201 });
+    { auth: true, validateBody: createInviteSchema }
+  )(req);
 }

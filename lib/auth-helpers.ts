@@ -2,6 +2,7 @@ import { auth } from "./auth";
 import { db } from "./db";
 import { Role } from "@/lib/constants";
 import { NextResponse } from "next/server";
+import { ApiErrors } from "@/lib/middlewares";
 
 export async function getSession() {
   return auth();
@@ -30,4 +31,26 @@ export async function requireProjectAdmin(projectId: string, userId: string) {
 /** Type guard — narrows NextResponse vs actual member */
 export function isMember(v: unknown): v is { id: string; role: string; projectId: string; userId: string; joinedAt: Date } {
   return typeof v === "object" && v !== null && "role" in v;
+}
+
+// ─── Throwing variants (used by refactored thin API routes) ──────────────────
+
+/** Like requireProjectMember but throws ApiError instead of returning a Response */
+export async function assertProjectMember(projectId: string, userId: string) {
+  const member = await db.projectMember.findUnique({
+    where: { projectId_userId: { projectId, userId } },
+  });
+  if (!member) throw ApiErrors.Forbidden("You are not a project member");
+  return member;
+}
+
+/** Like requireProjectAdmin but throws ApiError instead of returning a Response */
+export async function assertProjectAdmin(projectId: string, userId: string) {
+  const member = await db.projectMember.findUnique({
+    where: { projectId_userId: { projectId, userId } },
+  });
+  if (!member || (member.role !== Role.OWNER && member.role !== Role.ADMIN)) {
+    throw ApiErrors.Forbidden("Admin or Owner role required");
+  }
+  return member;
 }

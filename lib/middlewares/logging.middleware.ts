@@ -14,7 +14,7 @@ export interface LogContext {
   startTime: number;
   ip?: string;
   userAgent?: string;
-  userId?: number;
+  userId?: string;
 }
 
 /**

@@ -5,14 +5,14 @@
 ### 1. Branch Setup
 
 ```bash
-# One-time: create dev branch from main
+# One-time: create development branch from main
 git checkout main
 git pull origin main
-git checkout -b dev
+git checkout -b development
 
 # For each feature
-git checkout dev
-git pull origin dev
+git checkout development
+git pull origin development
 git checkout -b feat/<feature-name>
 ```
 
@@ -21,12 +21,11 @@ git checkout -b feat/<feature-name>
 For every feature, follow this implementation order:
 
 1. **Schema** — `prisma/schema.prisma` → `npx prisma migrate dev --name <feature>`
-2. **Validation** — Zod schemas co-located with API routes
-3. **API** — Route handlers in `app/api/`
-4. **Server Actions** — In `lib/actions.ts` or feature-specific files
+2. **Module** — `src/modules/<domain>/` — schema, repository, service, swagger files
+3. **API** — Thin controller in `app/api/` using handler factories from `lib/factories/`
+4. **Server Actions** — In `lib/actions.ts` for UI-driven mutations
 5. **UI** — Components in `components/` with CSS Modules following DESIGN.md
-6. **Postman** — Update `docs/arbitask-api.postman_collection.json`
-7. **Changelog** — Update `docs/API_CHANGELOG.md`
+6. **Changelog** — Update `docs/API_CHANGELOG.md`
 
 ### 3. Commit Convention
 
@@ -40,15 +39,18 @@ docs(readme): update deployment instructions
 
 ### 4. Pull Request Checklist
 
-- [ ] Branch created from `dev`, PR targets `dev`
+- [ ] Branch created from `development`, PR targets `development`
+- [ ] New module follows `src/modules/<domain>/` pattern (schema, repo, service, swagger)
+- [ ] API route uses handler factory — no raw `NextResponse.json()` calls
 - [ ] All API routes have Zod validation
+- [ ] `@openapi` JSDoc blocks added/updated in `*.swagger.ts`
+- [ ] Swagger UI renders correctly at `/api/docs/ui`
 - [ ] UI follows DESIGN.md conventions (CSS Modules, correct colors, correct fonts)
-- [ ] Postman collection updated for API changes
-- [ ] API_CHANGELOG.md updated
+- [ ] `docs/API_CHANGELOG.md` updated
 - [ ] No `any` types
 - [ ] No hardcoded secrets
 - [ ] Sentry error capturing on new error paths
-- [ ] Lint passes: `npx next lint`
+- [ ] Lint passes: `npm run lint`
 
 ### 5. Testing
 
@@ -79,14 +81,17 @@ npx prisma studio
 
 ## Architecture Decisions
 
+### Why module pattern (`src/modules/<domain>/`)?
+Separates database queries (repository), business logic (service), validation (schema), and docs (swagger). Keeps route handlers as thin controllers — no logic in `app/api/` files.
+
 ### Why CSS Modules over inline styles?
 The current MVP uses inline styles, but DESIGN.md requires a complex token system (colors, radii, elevations, breakpoints) that inline styles can't ergonomically support. CSS Modules provide co-located, scoped styles with full CSS feature support.
 
-### Why Zod on every API route?
-The MVP has zero input validation. Any malformed request body hits Prisma directly, risking database errors and potential injection. Zod provides type-safe validation with clear error messages.
+### Why Server Actions instead of fetch()?
+Server Actions run on the server, avoid an extra HTTP round-trip, and integrate seamlessly with Next.js's `revalidatePath` cache system. Use `fetch('/api/...')` only for external API consumers — all internal UI mutations go through `lib/actions.ts`.
 
 ### Why Server Components by default?
 Next.js 15 App Router performance benefits come from minimizing client-side JavaScript. Only use `"use client"` when the component needs: event handlers, useState, useEffect, browser APIs, or third-party client libraries.
 
-### Why separate `dev` branch?
-The MVP was built entirely on `main`. With multiple agents and parallel feature work, a `dev` integration branch prevents incomplete features from reaching production.
+### Why a separate `development` branch?
+The MVP was built entirely on `main`. With multiple agents and parallel feature work, a `development` integration branch prevents incomplete features from reaching production.

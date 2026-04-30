@@ -1,56 +1,52 @@
-import NodeCache from "node-cache";
-
 /**
- * @fileoverview In-memory cache client using node-cache
+ * @fileoverview In-memory cache stub
  *
- * Features:
- * - Extremely fast access (L1 cache)
- * - Automatic TTL expiry
- * - Singleton pattern
- * - Ideal for static data (categories, settings, configs)
+ * NOTE: This replaces the Inscript `node-cache` dependency.
+ * Uses a simple Map-based TTL cache. For production, swap this with
+ * Vercel KV, Upstash Redis (when needed), or Next.js `unstable_cache`.
  */
 
-declare global {
-  var memoryCache: (NodeCache & { __shutdownHandlersRegistered?: boolean }) | undefined;
+interface CacheEntry<T> {
+  value: T;
+  expiresAt: number | null;
 }
 
-let memoryCache: NodeCache;
+class MemoryCache {
+  private store = new Map<string, CacheEntry<unknown>>();
 
-/**
- * Create NodeCache instance
- * Default TTL: 1 hour (3600s)
- * Check period: 10 minutes (600s)
- */
-function createMemoryCacheClient(): NodeCache {
-  const client = new NodeCache({
-    stdTTL: 3600,
-    checkperiod: 600,
-    useClones: false, // Better performance, but be careful with mutations
-    deleteOnExpire: true,
-  });
-
-  console.log("✅ Memory Cache: Client initialized");
-  return client;
-}
-
-/**
- * Get or create Memory Cache client (singleton)
- */
-function getMemoryCacheClient(): NodeCache {
-  if (!memoryCache) {
-    memoryCache = global.memoryCache ?? createMemoryCacheClient();
-
-    // In development, store in global to prevent hot-reload issues
-    if (process.env.NODE_ENV !== "production") {
-      global.memoryCache = memoryCache;
-    }
+  set<T>(key: string, value: T, ttlSeconds?: number): void {
+    this.store.set(key, {
+      value,
+      expiresAt: ttlSeconds ? Date.now() + ttlSeconds * 1000 : null,
+    });
   }
 
-  return memoryCache;
+  get<T>(key: string): T | undefined {
+    const entry = this.store.get(key);
+    if (!entry) return undefined;
+    if (entry.expiresAt && Date.now() > entry.expiresAt) {
+      this.store.delete(key);
+      return undefined;
+    }
+    return entry.value as T;
+  }
+
+  has(key: string): boolean {
+    return this.get(key) !== undefined;
+  }
+
+  del(key: string): void {
+    this.store.delete(key);
+  }
+
+  flush(): void {
+    this.store.clear();
+  }
+
+  keys(): string[] {
+    return Array.from(this.store.keys());
+  }
 }
 
-// Initialize client
-const client = getMemoryCacheClient();
-
-export { client as memoryCache };
-export const getMemoryCacheConnection = () => memoryCache;
+export const memoryCache = new MemoryCache();
+export type { MemoryCache };

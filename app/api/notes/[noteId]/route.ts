@@ -1,40 +1,39 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import type { NextRequest } from "next/server";
+import { noteService } from "@/src/modules/notes/note.service";
+import { updateNoteSchema } from "@/src/modules/notes/note.schema";
+import { withMiddleware, successResponse, noContentResponse } from "@/lib/http";
+import { ApiErrors } from "@/lib/middlewares";
 
 type Params = { params: Promise<{ noteId: string }> };
 
-export async function PATCH(req: NextRequest, { params }: Params) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { noteId } = await params;
-
-  const note = await db.note.findUnique({ where: { id: noteId } });
-  if (!note || note.authorId !== session.user.id)
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
-  const body = await req.json();
-  const updated = await db.note.update({
-    where: { id: noteId },
-    data: {
-      title: body.title,
-      content: body.content,
-      projectId: body.projectId !== undefined ? body.projectId : undefined,
-    },
-  });
-
-  return NextResponse.json(updated);
+async function getNoteAndVerifyOwner(noteId: string, userId: string) {
+  const note = await noteService.getNoteById(noteId);
+  if (!note) throw ApiErrors.NotFound("Note not found");
+  if (note.authorId !== userId) throw ApiErrors.Forbidden("You do not own this note");
+  return note;
 }
 
-export async function DELETE(_req: NextRequest, { params }: Params) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { noteId } = await params;
+export function PATCH(req: NextRequest, { params }: Params) {
+  return withMiddleware(
+    async (_r, context) => {
+      const { noteId } = await params;
+      await getNoteAndVerifyOwner(noteId, String(context.user!.id));
+      const validated = updateNoteSchema.parse((_r as any).__validatedBody);
+      const updated = await noteService.updateNote(noteId, validated);
+      return successResponse(updated);
+    },
+    { auth: true, validateBody: updateNoteSchema }
+  )(req);
+}
 
-  const note = await db.note.findUnique({ where: { id: noteId } });
-  if (!note || note.authorId !== session.user.id)
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
-  await db.note.delete({ where: { id: noteId } });
-  return NextResponse.json({ ok: true });
+export function DELETE(req: NextRequest, { params }: Params) {
+  return withMiddleware(
+    async (_r, context) => {
+      const { noteId } = await params;
+      await getNoteAndVerifyOwner(noteId, String(context.user!.id));
+      await noteService.deleteNote(noteId);
+      return noContentResponse();
+    },
+    { auth: true }
+  )(req);
 }

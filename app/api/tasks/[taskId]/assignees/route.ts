@@ -1,72 +1,57 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import type { NextRequest } from "next/server";
+import { assigneeService } from "@/src/modules/assignees/assignee.service";
+import { withMiddleware, successResponse, createdResponse, noContentResponse } from "@/lib/http";
+import { assertProjectMember } from "@/lib/auth-helpers";
+import { ApiErrors } from "@/lib/middlewares";
 import { db } from "@/lib/db";
-import { isMember, requireProjectMember } from "@/lib/auth-helpers";
+import { z } from "zod";
 
 type Params = { params: Promise<{ taskId: string }> };
 
-export async function GET(_req: NextRequest, { params }: Params) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { taskId } = await params;
+const assigneeBodySchema = z.object({ userId: z.string().min(1, "userId is required") });
 
+async function getTaskAndVerifyMember(taskId: string, userId: string) {
   const task = await db.task.findUnique({ where: { id: taskId } });
-  if (!task) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  const member = await requireProjectMember(task.projectId, session.user.id);
-  if (!isMember(member)) return member;
-
-  const assignees = await db.taskAssignee.findMany({
-    where: { taskId },
-    include: { user: { select: { id: true, name: true, image: true } } },
-  });
-
-  return NextResponse.json(assignees);
+  if (!task) throw ApiErrors.NotFound("Task not found");
+  await assertProjectMember(task.projectId, userId);
+  return task;
 }
 
-export async function POST(req: NextRequest, { params }: Params) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { taskId } = await params;
-
-  const task = await db.task.findUnique({ where: { id: taskId } });
-  if (!task) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  const member = await requireProjectMember(task.projectId, session.user.id);
-  if (!isMember(member)) return member;
-
-  const { userId } = await req.json();
-  if (!userId) return NextResponse.json({ error: "userId required" }, { status: 400 });
-
-  // Ensure user is a project member
-  const targetMember = await db.projectMember.findUnique({
-    where: { projectId_userId: { projectId: task.projectId, userId } },
-  });
-  if (!targetMember) return NextResponse.json({ error: "User is not a project member" }, { status: 400 });
-
-  const assignee = await db.taskAssignee.upsert({
-    where: { taskId_userId: { taskId, userId } },
-    create: { taskId, userId },
-    update: {},
-    include: { user: { select: { id: true, name: true, image: true } } },
-  });
-
-  return NextResponse.json(assignee, { status: 201 });
+export function GET(req: NextRequest, { params }: Params) {
+  return withMiddleware(
+    async (_r, context) => {
+      const { taskId } = await params;
+      await getTaskAndVerifyMember(taskId, String(context.user!.id));
+      const assignees = await assigneeService.getAssigneesForTask(taskId);
+      return successResponse(assignees);
+    },
+    { auth: true }
+  )(req);
 }
 
-export async function DELETE(req: NextRequest, { params }: Params) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { taskId } = await params;
+export function POST(req: NextRequest, { params }: Params) {
+  return withMiddleware(
+    async (_r, context) => {
+      const { taskId } = await params;
+      const task = await getTaskAndVerifyMember(taskId, String(context.user!.id));
+      const body = assigneeBodySchema.parse((_r as any).__validatedBody);
+      const result = await assigneeService.addAssignee(taskId, body.userId, task.projectId);
+      if ("error" in result) throw ApiErrors.BadRequest("User is not a project member");
+      return createdResponse(result.data);
+    },
+    { auth: true, validateBody: assigneeBodySchema }
+  )(req);
+}
 
-  const task = await db.task.findUnique({ where: { id: taskId } });
-  if (!task) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  const member = await requireProjectMember(task.projectId, session.user.id);
-  if (!isMember(member)) return member;
-
-  const { userId } = await req.json();
-  await db.taskAssignee.deleteMany({ where: { taskId, userId } });
-
-  return NextResponse.json({ ok: true });
+export function DELETE(req: NextRequest, { params }: Params) {
+  return withMiddleware(
+    async (r, context) => {
+      const { taskId } = await params;
+      await getTaskAndVerifyMember(taskId, String(context.user!.id));
+      const body = assigneeBodySchema.parse(await r.json());
+      await assigneeService.removeAssignee(taskId, body.userId);
+      return noContentResponse();
+    },
+    { auth: true }
+  )(req);
 }

@@ -1,41 +1,76 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import type { NextRequest } from "next/server";
+import { noteService } from "@/src/modules/notes/note.service";
+import { createNoteSchema } from "@/src/modules/notes/note.schema";
+import { withMiddleware, successResponse, createdResponse } from "@/lib/http";
 
-export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const projectId = req.nextUrl.searchParams.get("projectId");
-
-  const notes = await db.note.findMany({
-    where: {
-      authorId: session.user.id,
-      ...(projectId ? { projectId } : {}),
+/**
+ * @openapi
+ * /api/notes:
+ *   get:
+ *     tags: [Notes]
+ *     summary: List notes for the authenticated user
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: projectId
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of notes
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+export function GET(req: NextRequest) {
+  return withMiddleware(
+    async (r, context) => {
+      const projectId = r.nextUrl.searchParams.get("projectId") || undefined;
+      const notes = await noteService.getNotesForUser(String(context.user!.id), projectId);
+      return successResponse(notes);
     },
-    orderBy: { createdAt: "desc" },
-  });
-
-  return NextResponse.json(notes);
+    { auth: true }
+  )(req);
 }
 
-export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const body = await req.json();
-  const { title, content, projectId } = body;
-
-  if (!title) return NextResponse.json({ error: "Title required" }, { status: 400 });
-
-  const note = await db.note.create({
-    data: {
-      title,
-      content: content || "",
-      projectId: projectId || null,
-      authorId: session.user.id,
+/**
+ * @openapi
+ * /api/notes:
+ *   post:
+ *     tags: [Notes]
+ *     summary: Create a note
+ *     security:
+ *       - CookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [title]
+ *             properties:
+ *               title:
+ *                 type: string
+ *               content:
+ *                 type: string
+ *               projectId:
+ *                 type: string
+ *                 nullable: true
+ *     responses:
+ *       201:
+ *         description: Created note
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+export function POST(req: NextRequest) {
+  return withMiddleware(
+    async (_r, context) => {
+      const validated = createNoteSchema.parse((_r as any).__validatedBody);
+      const note = await noteService.createNote(validated, String(context.user!.id));
+      return createdResponse(note);
     },
-  });
-
-  return NextResponse.json(note, { status: 201 });
+    { auth: true, validateBody: createNoteSchema }
+  )(req);
 }

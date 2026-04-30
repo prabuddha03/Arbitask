@@ -15,7 +15,7 @@ The `main` branch contains a working MVP with:
 - Gamification: XP system, 8 levels, 15 achievement badges
 - Three theme modes: Dark, Light, Eye Protection
 
-**What does NOT exist yet:** Sentry, Vitest, Browserbase, R2 integration, ESLint/Prettier, CSS Modules, dev branch. All of these must be set up before building new features.
+**What does NOT exist yet:** Sentry, Vitest, Browserbase, R2 integration, ESLint/Prettier, CSS Modules, `development` branch. All of these must be set up before building new features.
 
 **Infrastructure already set up:**
 - `lib/base/` — BaseRepository + BaseService for generic CRUD
@@ -127,19 +127,19 @@ The `main` branch contains a working MVP with:
 
 ## Git Branching Rules
 
-**All development MUST happen on the `dev` branch or feature branches created from `dev`.**
+**All development MUST happen on the `development` branch or feature branches created from `development`.**
 
 - `main` — Production-ready code only. Protected. Never push directly.
-- `dev` — Integration branch. All feature PRs target `dev`.
-- `feat/<feature-name>` — Feature branches from `dev`.
-- `fix/<bug-description>` — Bugfix branches from `dev`.
-- `hotfix/<description>` — Critical fixes from `main`, merged back to both `main` and `dev`.
+- `development` — Integration branch. All feature PRs target `development`.
+- `feat/<feature-name>` — Feature branches from `development`.
+- `fix/<bug-description>` — Bugfix branches from `development`.
+- `hotfix/<description>` — Critical fixes from `main`, merged back to both `main` and `development`.
 
 **Branch creation flow:**
-1. Before any work, ensure the `dev` branch exists: `git checkout -b dev main` (one-time)
-2. For each feature: `git checkout -b feat/<name> dev`
-3. All PRs target `dev`, never `main`
-4. `dev` → `main` only on verified releases
+1. Before any work, ensure the `development` branch exists: `git checkout -b development main` (one-time)
+2. For each feature: `git checkout -b feat/<name> development`
+3. All PRs target `development`, never `main`
+4. `development` → `main` only on verified releases
 
 ## Backend Architecture Rules
 
@@ -426,7 +426,7 @@ Activated with: a Linear issue URL or task from `.cursor/tasks.json`
 
 Steps:
 1. Read AGENTS.md (this file), REQUIREMENTS.md, and DESIGN.md before starting
-2. Ensure you are on the `dev` branch or a feature branch from `dev`: `git checkout -b feat/<feature-name> dev`
+2. Ensure you are on the `development` branch or a feature branch from `development`: `git checkout -b feat/<feature-name> development`
 3. Read the Linear issue fully including acceptance criteria
 4. Read relevant existing files before writing anything new
 5. Implement the feature in this order:
@@ -441,7 +441,7 @@ Steps:
 6. Verify Swagger docs render correctly at `/api/docs/ui`
 7. Update `docs/API_CHANGELOG.md` for any API changes
 8. Commit with: `feat(scope): description [linear:ISSUE-ID]`
-9. Create a PR targeting `dev` (never `main`) via GitHub MCP
+9. Create a PR targeting `development` (never `main`) via GitHub MCP
 10. Update the Linear issue status to "In Review"
 11. Do NOT write tests — that is the Tester agent's job
 12. Do NOT write docs — that is the Documenter agent's job
@@ -516,7 +516,7 @@ Steps:
 6. Review for: security issues, N+1 queries, missing Zod validation, missing error handling, hardcoded values, accessibility, DESIGN.md compliance
 7. **Verify module pattern**: business logic in service, DB in repository, schemas in schema file, no business logic in route handlers
 8. **Verify OpenAPI docs**: `@openapi` blocks present, swagger UI renders correctly
-9. Verify: PR targets `dev` branch (not `main`)
+9. Verify: PR targets `development` branch (not `main`)
 10. Post structured review via GitHub MCP:
     - ✅ What looks good
     - ⚠️ Must fix before merge
@@ -614,14 +614,14 @@ BROWSERBASE_TEST_URL=
 
 Before the Planner creates any feature tasks, the following foundational work must be completed. These should be the first Linear issues with label "bootstrap":
 
-1. [ ] Create `dev` branch from `main`
+1. [ ] Create `development` branch from `main`
 2. [ ] Set up ESLint + Prettier config (`.eslintrc.json`, `.prettierrc`)
 3. [x] Enable TypeScript strict mode in `tsconfig.json` ✅
 4. [ ] Install and configure Sentry (`@sentry/nextjs`)
 5. [ ] Install Vitest and create `vitest.config.ts`
 6. [x] Rebrand `lib/swagger/config.ts` from Inscript → Arbitask and clean up Inscript-specific schemas/routes ✅
 7. [ ] Set up Swagger UI route at `app/api/docs/ui/route.ts` and spec at `app/api/docs/route.ts`
-8. [x] Refactor all existing API routes to use module pattern (`src/modules/`) + handler factories ✅ (modules created; routes still use raw handlers — refactor pending on `dev`)
+8. [x] Refactor all existing API routes to use module pattern (`src/modules/`) + handler factories ✅ (modules created; routes still use raw handlers — refactor done on `development`)
 9. [x] Add `@openapi` JSDoc blocks to all existing API routes ✅ (in `*.swagger.ts` module files)
 10. [x] Add Zod validation to all existing API routes (via module schema files) ✅
 11. [x] Migrate all fetch() mutations to Server Actions in `lib/actions.ts` ✅

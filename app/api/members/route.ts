@@ -1,23 +1,43 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { isMember, requireProjectMember } from "@/lib/auth-helpers";
+import type { NextRequest } from "next/server";
+import { memberService } from "@/src/modules/members/member.service";
+import { withMiddleware, successResponse } from "@/lib/http";
+import { assertProjectMember } from "@/lib/auth-helpers";
+import { ApiErrors } from "@/lib/middlewares";
 
-export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const projectId = req.nextUrl.searchParams.get("projectId");
-  if (!projectId) return NextResponse.json({ error: "projectId required" }, { status: 400 });
-
-  const member = await requireProjectMember(projectId, session.user.id);
-  if (!isMember(member)) return member;
-
-  const members = await db.projectMember.findMany({
-    where: { projectId },
-    include: { user: { select: { id: true, name: true, email: true, image: true } } },
-    orderBy: { joinedAt: "asc" },
-  });
-
-  return NextResponse.json(members);
+/**
+ * @openapi
+ * /api/members:
+ *   get:
+ *     tags: [Members]
+ *     summary: List project members
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of project members
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
+ */
+export function GET(req: NextRequest) {
+  return withMiddleware(
+    async (r, context) => {
+      const projectId = r.nextUrl.searchParams.get("projectId");
+      if (!projectId) throw ApiErrors.BadRequest("projectId query param is required");
+      await assertProjectMember(projectId, String(context.user!.id));
+      
+      const members = await memberService.getMembersForProject(projectId);
+      return successResponse(members);
+    },
+    { auth: true }
+  )(req);
 }

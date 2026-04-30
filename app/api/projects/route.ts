@@ -1,57 +1,61 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { Role } from "@/lib/constants";
+import type { NextRequest } from "next/server";
+import { projectService } from "@/src/modules/projects/project.service";
+import { createProjectSchema } from "@/src/modules/projects/project.schema";
+import { withMiddleware, successResponse, createdResponse } from "@/lib/http";
 
-export async function GET() {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const memberships = await db.projectMember.findMany({
-    where: { userId: session.user.id },
-    include: {
-      project: {
-        include: {
-          tasks: { include: { assignees: { include: { user: { select: { id: true, name: true, image: true } } } } } },
-          members: { include: { user: { select: { id: true, name: true, image: true } } } },
-        },
-      },
+/**
+ * @openapi
+ * /api/projects:
+ *   get:
+ *     tags: [Projects]
+ *     summary: List all projects for the authenticated user
+ *     security:
+ *       - CookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Array of projects
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+export function GET(req: NextRequest) {
+  return withMiddleware(
+    async (_r, context) => {
+      const projects = await projectService.getProjectsForUser(String(context.user!.id));
+      return successResponse(projects);
     },
-    orderBy: { joinedAt: "asc" },
-  });
-
-  return NextResponse.json(memberships.map((m) => m.project));
+    { auth: true }
+  )(req);
 }
 
-export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const body = await req.json();
-  const { name, description, colorId, status, priority, lead, startDate, targetDate } = body;
-
-  if (!name) return NextResponse.json({ error: "Name required" }, { status: 400 });
-
-  const project = await db.project.create({
-    data: {
-      name,
-      description: description || null,
-      colorId: colorId || "rose",
-      status: status || "backlog",
-      priority: priority || "no_priority",
-      lead: lead || null,
-      startDate: startDate ? new Date(startDate) : null,
-      targetDate: targetDate ? new Date(targetDate) : null,
-      ownerId: session.user.id,
-      members: {
-        create: { userId: session.user.id, role: Role.OWNER },
-      },
+/**
+ * @openapi
+ * /api/projects:
+ *   post:
+ *     tags: [Projects]
+ *     summary: Create a new project
+ *     security:
+ *       - CookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateProjectRequest'
+ *     responses:
+ *       201:
+ *         description: Created project
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+export function POST(req: NextRequest) {
+  return withMiddleware(
+    async (_r, context) => {
+      const validated = createProjectSchema.parse((_r as any).__validatedBody);
+      const project = await projectService.createProject(validated, String(context.user!.id));
+      return createdResponse(project);
     },
-    include: {
-      tasks: true,
-      members: { include: { user: { select: { id: true, name: true, image: true } } } },
-    },
-  });
-
-  return NextResponse.json(project, { status: 201 });
+    { auth: true, validateBody: createProjectSchema }
+  )(req);
 }
