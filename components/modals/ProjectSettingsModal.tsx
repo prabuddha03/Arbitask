@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Modal, Btn, Avatar } from "@/components/ui";
 import { PROJECT_ICONS } from "@/lib/constants";
+import { generateInvite } from "@/lib/actions";
 
 function Label({ children }: { children: React.ReactNode }) {
   return <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text2)", marginBottom: 6 }}>{children}</div>;
@@ -45,18 +46,14 @@ export function ProjectSettingsModal({
 
   const ROLE_LABEL: Record<string, string> = { OWNER: "Owner", ADMIN: "Admin", MEMBER: "Member", VIEWER: "Viewer" };
 
-  async function generateInvite() {
+  async function handleGenerateInvite() {
     setGenerating(true);
-    const res = await fetch("/api/invites", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ projectId, role: "MEMBER" }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setInviteLink(`${window.location.origin}/invite/${data.token}`);
+    try {
+      const result = await generateInvite(projectId, "MEMBER");
+      setInviteLink(`${window.location.origin}/invite/${result.token}`);
+    } finally {
+      setGenerating(false);
     }
-    setGenerating(false);
   }
 
   const tabStyle = (active: boolean): React.CSSProperties => ({
@@ -156,7 +153,7 @@ export function ProjectSettingsModal({
               Anyone with this link can join as a Member. Links expire in 7 days.
             </p>
             {!inviteLink ? (
-              <Btn onClick={generateInvite} disabled={generating}>
+              <Btn onClick={handleGenerateInvite} disabled={generating}>
                 {generating ? "Generating..." : "Generate Link"}
               </Btn>
             ) : (

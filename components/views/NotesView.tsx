@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { createNote, updateNote, deleteNote } from "@/lib/actions";
 import { fmtDate } from "@/lib/helpers";
 import { renderMd } from "@/lib/markdown";
 import { Btn, Badge, Empty } from "@/components/ui";
@@ -28,7 +28,6 @@ interface NotesViewProps {
 }
 
 export function NotesView({ notes, projects, defaultProjectId }: NotesViewProps) {
-  const router = useRouter();
   const [pending, startTransition] = useTransition();
 
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
@@ -98,33 +97,28 @@ export function NotesView({ notes, projects, defaultProjectId }: NotesViewProps)
 
   async function addNote() {
     if (!newTitle.trim()) return;
-    await fetch("/api/notes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: newTitle, content: newContent, projectId: newProject || null }),
+    startTransition(async () => {
+      await createNote({ title: newTitle, content: newContent, projectId: newProject || null });
+      setNewTitle("");
+      setNewContent("");
+      setNewProject("");
+      setShowNew(false);
     });
-    setNewTitle("");
-    setNewContent("");
-    setNewProject("");
-    setShowNew(false);
-    startTransition(() => router.refresh());
   }
 
-  async function updateNote() {
+  async function handleUpdateNote() {
     if (!note) return;
-    await fetch(`/api/notes/${note.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: editTitle, content: editContent }),
+    startTransition(async () => {
+      await updateNote(note.id, { title: editTitle, content: editContent });
+      setEditing(false);
     });
-    setEditing(false);
-    startTransition(() => router.refresh());
   }
 
-  async function deleteNote(noteId: string) {
-    await fetch(`/api/notes/${noteId}`, { method: "DELETE" });
-    setActiveNoteId(null);
-    startTransition(() => router.refresh());
+  async function handleDeleteNote(noteId: string) {
+    startTransition(async () => {
+      await deleteNote(noteId);
+      setActiveNoteId(null);
+    });
   }
 
   return (
@@ -176,7 +170,7 @@ export function NotesView({ notes, projects, defaultProjectId }: NotesViewProps)
               )}
             </div>
             <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-              <Btn onClick={updateNote} disabled={pending}>Save</Btn>
+              <Btn onClick={handleUpdateNote} disabled={pending}>Save</Btn>
               <Btn variant="ghost" onClick={() => { setEditing(false); setSlashOpen(false); }}>Cancel</Btn>
               <Btn variant="ghost" onClick={() => setFullscreen(true)} style={{ marginLeft: "auto" }}>⛶ Expand</Btn>
             </div>
@@ -191,7 +185,7 @@ export function NotesView({ notes, projects, defaultProjectId }: NotesViewProps)
               <div style={{ display: "flex", gap: 6 }}>
                 <Btn size="sm" variant="ghost" onClick={() => { setEditTitle(note.title); setEditContent(note.content); setEditing(true); setFullscreen(true); }}>⛶</Btn>
                 <Btn size="sm" variant="secondary" onClick={() => { setEditTitle(note.title); setEditContent(note.content); setEditing(true); }}>Edit</Btn>
-                <Btn size="sm" variant="danger" onClick={() => deleteNote(note.id)}>Delete</Btn>
+                <Btn size="sm" variant="danger" onClick={() => handleDeleteNote(note.id)}>Delete</Btn>
               </div>
             </div>
             <div style={{ fontSize: 14, lineHeight: 1.8, color: "var(--text2)" }} dangerouslySetInnerHTML={{ __html: renderMd(note.content) }} />
@@ -209,7 +203,7 @@ export function NotesView({ notes, projects, defaultProjectId }: NotesViewProps)
               style={{ flex: 1, fontSize: 22, fontWeight: 800, background: "transparent", border: "none", borderBottom: "2px solid var(--accent)", borderRadius: 0, padding: "6px 0", color: "var(--text)", outline: "none" }}
             />
             <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-              <Btn onClick={async () => { await updateNote(); setFullscreen(false); }} disabled={pending}>Save</Btn>
+              <Btn onClick={async () => { await handleUpdateNote(); setFullscreen(false); }} disabled={pending}>Save</Btn>
               <Btn variant="ghost" onClick={() => { setFullscreen(false); setEditing(false); setSlashOpen(false); }}>✕ Close</Btn>
             </div>
           </div>

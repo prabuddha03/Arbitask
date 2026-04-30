@@ -1,12 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { STATUSES, TASK_TYPES } from "@/lib/constants";
 import { stC } from "@/lib/theme";
 import { fmtDate } from "@/lib/helpers";
 import { Badge, Empty } from "@/components/ui";
 import { useState } from "react";
 import { TaskDetailModal } from "@/components/modals/TaskDetailModal";
+import { updateTask, deleteTask, addAssignee, removeAssignee } from "@/lib/actions";
 
 type TaskUser = { id: string; name: string | null; image: string | null };
 type Member = { id: string; userId: string; role: string; user: TaskUser };
@@ -36,7 +37,7 @@ interface ListViewProps {
 }
 
 export function ListView({ project, projects }: ListViewProps) {
-  const router = useRouter();
+  const [, startTransition] = useTransition();
   const [detailTaskId, setDetailTaskId] = useState<string | null>(null);
   const [filterProjectId, setFilterProjectId] = useState<string>("");
 
@@ -61,24 +62,16 @@ export function ListView({ project, projects }: ListViewProps) {
     : null;
   const detailProject = detailEntry?._project || null;
 
-  async function updateTask(taskId: string, updates: Record<string, unknown>) {
-    fetch(`/api/tasks/${taskId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updates),
-    }).then(() => router.refresh());
+  function handleUpdateTask(taskId: string, updates: Record<string, unknown>) {
+    startTransition(() => updateTask(taskId, updates as Parameters<typeof updateTask>[1]));
   }
 
-  function deleteTask(taskId: string) {
-    fetch(`/api/tasks/${taskId}`, { method: "DELETE" }).then(() => router.refresh());
+  function handleDeleteTask(taskId: string) {
+    startTransition(() => deleteTask(taskId));
   }
 
-  async function handleAssigneeChange(taskId: string, userId: string, selected: boolean) {
-    fetch(`/api/tasks/${taskId}/assignees`, {
-      method: selected ? "POST" : "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId }),
-    }).then(() => router.refresh());
+  function handleAssigneeChange(taskId: string, userId: string, selected: boolean) {
+    startTransition(() => selected ? addAssignee(taskId, userId) : removeAssignee(taskId, userId));
   }
 
   if (!sorted.length) return <Empty icon="📝" title="No tasks yet" sub="Add tasks from Kanban view" />;
@@ -135,7 +128,7 @@ export function ListView({ project, projects }: ListViewProps) {
               <select
                 value={task.status}
                 onClick={(e) => e.stopPropagation()}
-                onChange={(e) => updateTask(task.id, { status: e.target.value })}
+                onChange={(e) => handleUpdateTask(task.id, { status: e.target.value })}
                 style={{ padding: "4px 22px 4px 7px", fontSize: 11, borderRadius: 6, background: sc + "14", color: sc, border: `1px solid ${sc}28` }}
               >
                 {STATUSES.map((s) => <option key={s.id} value={s.id}>{s.emoji} {s.label}</option>)}
@@ -143,7 +136,7 @@ export function ListView({ project, projects }: ListViewProps) {
               <span style={{ fontSize: 12, color: "var(--text3)" }}>{fmtDate(task.startDate) || "—"}</span>
               <span style={{ fontSize: 12, color: "var(--text3)" }}>{fmtDate(task.dueDate) || "—"}</span>
               <button
-                onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }}
+                onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
                 style={{ background: "none", border: "none", color: "var(--text3)", cursor: "pointer", fontSize: 11, opacity: 0.4 }}
               >
                 ✕
@@ -159,7 +152,7 @@ export function ListView({ project, projects }: ListViewProps) {
           onClose={() => setDetailTaskId(null)}
           task={detailTask}
           project={detailProject}
-          onUpdateTask={updateTask}
+          onUpdateTask={handleUpdateTask}
           onAssigneeChange={handleAssigneeChange}
         />
       )}

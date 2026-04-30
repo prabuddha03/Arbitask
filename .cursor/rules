@@ -1,0 +1,198 @@
+# Cursor Rules — Arbitask
+
+## Project Context
+
+You are working on **Arbitask**, a gamified project & idea management web app. Before doing anything, read these files in order:
+1. `AGENTS.md` — Agent roles, coding conventions, repository structure, branching rules, **backend architecture rules**
+2. `REQUIREMENTS.md` — What to build, what exists, what's broken, tech stack
+3. `DESIGN.md` — Visual design system (Mastercard-inspired) that ALL UI must follow
+
+## Critical Rules
+
+### Branching
+- **NEVER** commit to `main` directly
+- All work happens on `dev` or feature branches from `dev`
+- PRs always target `dev`
+
+### Before Writing Code
+1. Check if a `dev` branch exists: `git branch -a | grep dev`
+2. If not, create it: `git checkout -b dev main`
+3. Create your feature branch from dev: `git checkout -b feat/<name> dev`
+
+---
+
+## Backend Architecture — Module Pattern
+
+> **MANDATORY**: All backend features MUST use the module pattern. No exceptions.
+
+### Directory Structure
+
+```
+src/modules/<domain>/
+├── <domain>.repository.ts   # Extends BaseRepository — DB queries only
+├── <domain>.service.ts      # Extends BaseService — business logic
+├── <domain>.schema.ts       # Zod schemas — create, update, query
+└── <domain>.swagger.ts      # @openapi JSDoc blocks
+```
+
+### What Goes Where
+
+| Layer | Location | Purpose | Rules |
+|---|---|---|---|
+| **Route Handler** | `app/api/<domain>/route.ts` | Thin controller | Use handler factories from `lib/factories/`. NO business logic. |
+| **Service** | `src/modules/<domain>/<domain>.service.ts` | Business logic | Auth checks, side effects, gamification. Extends `BaseService`. |
+| **Repository** | `src/modules/<domain>/<domain>.repository.ts` | DB queries | Prisma operations only. Extends `BaseRepository`. |
+| **Schema** | `src/modules/<domain>/<domain>.schema.ts` | Validation | Zod schemas for request bodies, query params, types. |
+| **Swagger** | `src/modules/<domain>/<domain>.swagger.ts` | API docs | `@openapi` JSDoc blocks for swagger-jsdoc. |
+
+### Import Rules
+
+```typescript
+// ✅ CORRECT — use these patterns
+import { projectService } from "@/src/modules/projects/project.service";
+import { createProjectSchema } from "@/src/modules/projects/project.schema";
+import { createGetHandler, createPostHandler } from "@/lib/factories";
+import { withMiddleware, successResponse } from "@/lib/http";
+import { ApiErrors } from "@/lib/middlewares";
+import { db } from "@/lib/db";
+
+// ❌ WRONG — never do these
+import { PrismaClient } from "@prisma/client"; // Never instantiate directly
+import { NextResponse } from "next/server";      // Use ApiResponse helpers
+// Business logic in route handler               // Move to service layer
+```
+
+### Handler Factory Usage
+
+```typescript
+// app/api/projects/route.ts — THIN CONTROLLER
+import { projectService } from "@/src/modules/projects/project.service";
+import { createProjectSchema } from "@/src/modules/projects/project.schema";
+import { createPaginatedHandler, createPostHandler } from "@/lib/factories";
+
+export const GET = createPaginatedHandler(
+  async (req, context) => { /* delegate to service */ },
+  { auth: true }
+);
+
+export const POST = createPostHandler(
+  async (req, context, validated) => projectService.create(validated, context.user!.id),
+  { auth: true, validateBody: createProjectSchema }
+);
+```
+
+### Error Handling
+
+```typescript
+// ✅ Use ApiErrors from lib/middlewares
+import { ApiErrors } from "@/lib/http";
+
+throw ApiErrors.NotFound("Project not found");
+throw ApiErrors.Unauthorized("Must be logged in");
+throw ApiErrors.Forbidden("Only admins can delete projects");
+throw ApiErrors.BadRequest("Invalid project data", details);
+
+// ❌ Don't throw generic errors or return raw JSON
+throw new Error("not found");                          // Wrong
+return NextResponse.json({ error: "..." }, { status: 404 }); // Wrong
+```
+
+---
+
+## OpenAPI / Swagger Documentation
+
+> **MANDATORY**: Every API endpoint MUST have `@openapi` JSDoc documentation.
+
+### Where Docs Live
+- **Swagger UI**: `/api/docs/ui` — interactive API explorer
+- **Raw OpenAPI JSON**: `/api/docs` — for Postman/Insomnia import
+- **Config**: `lib/swagger/config.ts` — shared schemas, security, tags
+
+### Writing Docs
+
+Add `@openapi` JSDoc blocks either:
+1. **Inline in route files** (`app/api/**/route.ts`) — preferred for simple endpoints
+2. **Module swagger files** (`src/modules/<domain>/<domain>.swagger.ts`) — for complex endpoints
+
+```typescript
+/**
+ * @openapi
+ * /api/projects:
+ *   get:
+ *     tags:
+ *       - Projects
+ *     summary: List all projects
+ *     security:
+ *       - CookieAuth: []
+ *     responses:
+ *       200:
+ *         description: List of projects
+ */
+export const GET = createPaginatedHandler(/* ... */);
+```
+
+### Tags (use these exactly)
+Projects, Tasks, Notes, Members, Invites, Assignees, Auth, Gamification, Health
+
+---
+
+## API Routes
+
+### Response Format
+
+All API responses follow this shape:
+
+```typescript
+// Success
+{ success: true, data: T, message?: string, meta?: { pagination } }
+
+// Error
+{ success: false, error: { code: string, message: string, details?: any, requestId?: string } }
+```
+
+### Validation
+- Every API route MUST validate input with Zod schemas from `src/modules/<domain>/<domain>.schema.ts`
+- Use `validateBody` option in handler factories — never parse `req.json()` manually
+- Common schemas available in `lib/validation/schemas/common.schema.ts`
+
+---
+
+## UI Components
+
+### Rules
+- Use CSS Modules (`.module.css`) — NOT inline styles
+- Follow DESIGN.md color palette, typography, and spacing
+- Background is Canvas Cream (`#F3F0EE`) — never pure white
+- Use Sofia Sans (Google Fonts) as font family
+
+### Files to Read
+- `AGENTS.md` — Your operating manual
+- `REQUIREMENTS.md` — What to build
+- `DESIGN.md` — How it should look
+- `arbitask-feature-list.md` — Full product roadmap
+- `docs/API_CHANGELOG.md` — Track API changes here
+
+---
+
+## Commit Format
+
+```
+feat(scope): description [linear:ISSUE-ID]
+fix(scope): description [linear:ISSUE-ID]
+chore(scope): description
+```
+
+## Testing
+
+- Every new file → corresponding test file in `tests/unit/`
+- Run tests: `npx vitest run`
+- Coverage target: 80%+ for `lib/`, `src/modules/`, and `app/api/`
+- Cover e2e testing in `tests/e2e/`
+
+## Legacy Code Warning
+
+The `/src/components/`, `/src/constants/`, `/src/utils/`, `/src/styles/` directories contain OLD Vite SPA code. Do NOT import from these. Use files from:
+- `app/` — Pages and API routes
+- `components/` — React components
+- `lib/` — Shared infrastructure utilities
+- `src/modules/` — Backend domain modules (NEW — this IS the correct location)

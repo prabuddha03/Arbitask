@@ -1,0 +1,11 @@
+{
+    "postgres": {
+    "command": "dotenv",
+    "args": [
+        "-e", ".env",
+        "--",
+        "npx", "-y", "@crystaldba/postgres-mcp",
+        "--access-mode=unrestricted"
+        ]
+    }
+}

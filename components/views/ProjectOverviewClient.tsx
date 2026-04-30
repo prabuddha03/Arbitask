@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect, useTransition } from "react";
 import { PROJECT_STATUSES, PROJECT_PRIORITIES, PROJECT_ICONS } from "@/lib/constants";
+import { updateProject } from "@/lib/actions";
 
 type Member = { id: string; role: string; user: { id: string; name: string | null; image: string | null } };
 
@@ -33,7 +33,7 @@ function PropRow({ label, children }: { label: string; children: React.ReactNode
 }
 
 export function ProjectOverviewClient({ project }: ProjectOverviewClientProps) {
-  const router = useRouter();
+  const [, startTransition] = useTransition();
 
   // Editable state
   const [name, setName] = useState(project.name);
@@ -47,11 +47,7 @@ export function ProjectOverviewClient({ project }: ProjectOverviewClientProps) {
   useEffect(() => { if (editingDesc) descRef.current?.focus(); }, [editingDesc]);
 
   function patch(data: Record<string, string | null>) {
-    fetch(`/api/projects/${project.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    }).then(() => router.refresh());
+    startTransition(() => updateProject(project.id, data));
   }
 
   function saveName() {

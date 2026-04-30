@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { STATUSES, TASK_TYPES } from "@/lib/constants";
 import { stC } from "@/lib/theme";
 import { fmtDate } from "@/lib/helpers";
 import { Badge, Empty, Avatar } from "@/components/ui";
 import { TaskModal } from "@/components/modals/TaskModal";
 import { TaskDetailModal } from "@/components/modals/TaskDetailModal";
+import { createTask, updateTask, deleteTask, addAssignee, removeAssignee } from "@/lib/actions";
 
 type TaskUser = { id: string; name: string | null; image: string | null };
 type Member = { id: string; userId: string; role: string; user: TaskUser };
@@ -38,7 +38,7 @@ interface KanbanViewProps {
 }
 
 export function KanbanView({ project, projects, initialAddStatus }: KanbanViewProps) {
-  const router = useRouter();
+  const [, startTransition] = useTransition();
   const [drag, setDrag] = useState<string | null>(null);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [initialStatus, setInitialStatus] = useState(initialAddStatus || "idea");
@@ -61,51 +61,26 @@ export function KanbanView({ project, projects, initialAddStatus }: KanbanViewPr
     : null;
   const detailProject = detailTaskEntry?._project || null;
 
-  function updateTaskStatus(taskId: string, newStatus: string) {
-    fetch(`/api/tasks/${taskId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: newStatus }),
-    }).then(() => router.refresh());
+  function handleUpdateTaskStatus(taskId: string, newStatus: string) {
+    startTransition(() => updateTask(taskId, { status: newStatus }));
   }
 
-  async function createTask(data: { title: string; type: string; status: string; startDate: string; dueDate: string; projectId?: string }) {
+  function handleCreateTask(data: { title: string; type: string; status: string; startDate: string; dueDate: string; projectId?: string }) {
     const pid = data.projectId || project?.id;
     if (!pid) return;
-    fetch("/api/tasks", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ projectId: pid, title: data.title, type: data.type, status: data.status, startDate: data.startDate, dueDate: data.dueDate }),
-    }).then(() => router.refresh());
+    startTransition(() => createTask({ projectId: pid, title: data.title, type: data.type, status: data.status, startDate: data.startDate || null, dueDate: data.dueDate || null }));
   }
 
-  function deleteTask(taskId: string) {
-    fetch(`/api/tasks/${taskId}`, { method: "DELETE" }).then(() => router.refresh());
+  function handleDeleteTask(taskId: string) {
+    startTransition(() => deleteTask(taskId));
   }
 
-  async function updateTask(taskId: string, updates: Record<string, unknown>) {
-    fetch(`/api/tasks/${taskId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updates),
-    }).then(() => router.refresh());
+  function handleUpdateTask(taskId: string, updates: Record<string, unknown>) {
+    startTransition(() => updateTask(taskId, updates as Parameters<typeof updateTask>[1]));
   }
 
-  async function handleAssigneeChange(taskId: string, userId: string, selected: boolean) {
-    if (selected) {
-      await fetch(`/api/tasks/${taskId}/assignees`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
-      });
-    } else {
-      await fetch(`/api/tasks/${taskId}/assignees`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
-      });
-    }
-    router.refresh();
+  function handleAssigneeChange(taskId: string, userId: string, selected: boolean) {
+    startTransition(() => selected ? addAssignee(taskId, userId) : removeAssignee(taskId, userId));
   }
 
   if (allProjects.length === 0) {
@@ -141,7 +116,7 @@ export function KanbanView({ project, projects, initialAddStatus }: KanbanViewPr
               onDragLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
               onDrop={(e) => {
                 e.currentTarget.style.background = "transparent";
-                if (drag) { updateTaskStatus(drag, status.id); setDrag(null); }
+                if (drag) { handleUpdateTaskStatus(drag, status.id); setDrag(null); }
               }}
               style={{ flex: "1 0 220px", maxWidth: 300, display: "flex", flexDirection: "column", borderRadius: 14, transition: "background .2s" }}
             >
@@ -167,7 +142,7 @@ export function KanbanView({ project, projects, initialAddStatus }: KanbanViewPr
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 7 }}>
                         <span style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: "var(--text)" }}>{task.title}</span>
                         <button
-                          onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }}
+                          onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
                           style={{ background: "none", border: "none", color: "var(--text3)", cursor: "pointer", fontSize: 11, opacity: 0.5, padding: "2px" }}
                         >
                           ✕
@@ -215,7 +190,7 @@ export function KanbanView({ project, projects, initialAddStatus }: KanbanViewPr
       <TaskModal
         open={showTaskModal}
         onClose={() => setShowTaskModal(false)}
-        onSave={createTask}
+        onSave={handleCreateTask}
         initialStatus={initialStatus}
         projects={isGlobal ? allProjects.map((p) => ({ id: p.id, name: p.name })) : undefined}
         initialProjectId={isGlobal ? (filterProjectId || allProjects[0]?.id) : project?.id}
@@ -227,7 +202,7 @@ export function KanbanView({ project, projects, initialAddStatus }: KanbanViewPr
           onClose={() => setDetailTaskId(null)}
           task={detailTask}
           project={detailProject}
-          onUpdateTask={updateTask}
+          onUpdateTask={handleUpdateTask}
           onAssigneeChange={handleAssigneeChange}
         />
       )}

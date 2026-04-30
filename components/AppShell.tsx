@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useTransition } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { ThemeProvider, useTheme } from "@/components/providers/ThemeProvider";
 import { Sidebar } from "@/components/Sidebar";
@@ -8,6 +8,7 @@ import { ProjectModal } from "@/components/modals/ProjectModal";
 import { ProjectSettingsModal } from "@/components/modals/ProjectSettingsModal";
 import { TaskModal } from "@/components/modals/TaskModal";
 import { Stats } from "@/lib/constants";
+import { createTask, createProject, updateProject, removeMember } from "@/lib/actions";
 
 type TaskUser = { id: string; name: string | null; image: string | null };
 type Task = {
@@ -57,6 +58,7 @@ const VIEW_LABELS: Record<string, string> = {
 
 function Shell({ projects, stats, user, children }: AppShellProps) {
   const { mode, cycleMode } = useTheme();
+  const [, startTransition] = useTransition();
   const [showNewProject, setShowNewProject] = useState(false);
   const [showProjectSettings, setShowProjectSettings] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
@@ -156,12 +158,8 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
           onSave={async (data) => {
             const pid = data.projectId || activeProject?.id;
             if (!pid) return;
-            setShowAddTask(false); // close immediately — feels instant
-            fetch("/api/tasks", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ projectId: pid, title: data.title, type: data.type, status: data.status, startDate: data.startDate, dueDate: data.dueDate }),
-            }).then(() => router.refresh());
+            setShowAddTask(false);
+            startTransition(() => createTask({ projectId: pid, title: data.title, type: data.type, status: data.status, startDate: data.startDate || null, dueDate: data.dueDate || null }));
           }}
         />
       )}
@@ -170,17 +168,9 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
         <ProjectModal
           onClose={() => setShowNewProject(false)}
           onSave={async (proj) => {
-            const res = await fetch("/api/projects", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ ...proj, colorId: proj.colorId }),
-            });
-            if (res.ok) {
-              const data = await res.json();
-              setShowNewProject(false);
-              router.push(`/projects/${data.id}/kanban`);
-              router.refresh();
-            }
+            const project = await createProject({ ...proj, colorId: proj.colorId });
+            setShowNewProject(false);
+            router.push(`/projects/${project.id}/kanban`);
           }}
         />
       )}
@@ -196,14 +186,10 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
           onClose={() => setShowProjectSettings(false)}
           onUpdate={async (updates) => {
             setShowProjectSettings(false);
-            fetch(`/api/projects/${activeProject.id}`, {
-              method: "PATCH",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ ...updates, colorId: updates.iconId }),
-            }).then(() => router.refresh());
+            startTransition(() => updateProject(activeProject.id, { name: updates.name, description: updates.description, colorId: updates.iconId }));
           }}
           onRemoveMember={async (memberId) => {
-            fetch(`/api/members/${memberId}`, { method: "DELETE" }).then(() => router.refresh());
+            startTransition(() => removeMember(memberId));
           }}
         />
       )}
