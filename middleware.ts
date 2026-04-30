@@ -25,5 +25,8 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    // Exclude OpenAPI + Swagger UI so Edge middleware does not load Prisma (auth adapter); docs must stay public for tooling imports.
+    "/((?!_next/static|_next/image|favicon.ico|api/docs).*)",
+  ],
 };
