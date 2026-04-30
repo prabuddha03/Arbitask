@@ -17,7 +17,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       project: {
         include: {
           tasks: {
-            include: {
+            select: {
+              id: true,
+              status: true,
               assignees: { include: { user: { select: { id: true, name: true, image: true } } } },
             },
           },
@@ -28,7 +30,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     orderBy: { joinedAt: "asc" },
   });
 
-  const projects = memberships.map((m) => m.project);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const projects = memberships.map((m) => m.project) as any[];
 
   const noteCount = await db.note.count({ where: { authorId: userId } });
   const stats = calcStats(

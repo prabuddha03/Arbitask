@@ -1,60 +1,59 @@
 /**
- * @fileoverview Rate limiting middleware using Upstash Redis
+ * @fileoverview Rate limiting middleware
+ *
+ * Uses in-memory sliding window rate limiting (suitable for single-instance dev/staging).
+ * For production multi-instance deployments, swap the store for Redis/Upstash.
  */
 
-import { queue } from "../cache";
 import { ApiErrors, ApiError } from "./error.middleware";
 import { getClientIp } from "./logging.middleware";
 import type { AuthUser } from "./auth.middleware";
 
 export interface RateLimitConfig {
-  max: number; // Maximum requests
+  max: number; // Maximum requests allowed
   window: string; // Time window: '1s', '1m', '1h', '1d'
   message?: string; // Custom error message
   keyPrefix?: string; // Custom key prefix
 }
 
-/**
- * Parse time window string to seconds
- */
-function parseWindow(window: string): number {
-  const match = window.match(/^(\d+)([smhd])$/);
+interface WindowEntry {
+  count: number;
+  resetAt: number; // Unix ms timestamp
+}
 
-  if (!match) {
-    throw new Error(`Invalid window format: ${window}`);
-  }
+// In-memory rate limit store (sliding window, per key)
+const store = new Map<string, WindowEntry>();
+
+/**
+ * Parse time window string to milliseconds
+ */
+function parseWindowMs(window: string): number {
+  const match = window.match(/^(\d+)([smhd])$/);
+  if (!match) throw new Error(`Invalid window format: ${window}`);
 
   const value = parseInt(match[1], 10);
-  const unit = match[2];
-
-  switch (unit) {
-    case "s":
-      return value;
-    case "m":
-      return value * 60;
-    case "h":
-      return value * 60 * 60;
-    case "d":
-      return value * 60 * 60 * 24;
-    default:
-      throw new Error(`Invalid window unit: ${unit}`);
+  switch (match[2]) {
+    case "s": return value * 1_000;
+    case "m": return value * 60_000;
+    case "h": return value * 3_600_000;
+    case "d": return value * 86_400_000;
+    default: throw new Error(`Invalid window unit: ${match[2]}`);
   }
 }
 
 /**
- * Generate rate limit key
+ * Generate a rate limit store key
  */
 function getRateLimitKey(req: Request, user: AuthUser | null, config: RateLimitConfig): string {
-  const prefix = config.keyPrefix || "ratelimit";
+  const prefix = config.keyPrefix ?? "ratelimit";
   const identifier = user ? `user:${user.id}` : `ip:${getClientIp(req)}`;
-  const url = new URL(req.url);
-  const endpoint = url.pathname;
-
+  const endpoint = new URL(req.url).pathname;
   return `${prefix}:${endpoint}:${identifier}`;
 }
 
 /**
- * Check rate limit
+ * Check and enforce rate limit for the request.
+ * Does NOT throw if the rate limit store itself errors — silent fail to avoid blocking requests.
  */
 export async function checkRateLimit(
   req: Request,
@@ -62,38 +61,35 @@ export async function checkRateLimit(
   config: RateLimitConfig
 ): Promise<void> {
   try {
-    // Skip rate limiting for admins and editors to reduce Redis usage
-    if (user && (user.role === "admin" || user.role === "editor")) {
+    const key = getRateLimitKey(req, user, config);
+    const windowMs = parseWindowMs(config.window);
+    const now = Date.now();
+
+    const entry = store.get(key);
+
+    if (!entry || now >= entry.resetAt) {
+      // New window
+      store.set(key, { count: 1, resetAt: now + windowMs });
       return;
     }
 
-    const key = getRateLimitKey(req, user, config);
-    const windowSeconds = parseWindow(config.window);
-
-    const result = await queue.checkRateLimit(key, config.max, windowSeconds);
-
-    if (!result.allowed) {
+    if (entry.count >= config.max) {
       throw ApiErrors.TooManyRequests(
-        config.message ||
-          `Rate limit exceeded. Try again after ${new Date(result.resetAt).toISOString()}`,
-        result.resetAt
+        config.message ?? `Rate limit exceeded. Retry after ${new Date(entry.resetAt).toISOString()}`,
+        entry.resetAt
       );
     }
 
-    // Log rate limit info
-    console.log(`🚦 Rate limit check: ${result.remaining}/${config.max} remaining`);
+    entry.count += 1;
   } catch (error) {
-    if (error instanceof ApiError) {
-      throw error;
-    }
-
-    console.error("Rate Limit: Error checking rate limit:", error);
-    // Don't block requests if rate limiting fails
+    if (error instanceof ApiError) throw error;
+    // Swallow internal store errors — never block a request
+    console.warn("[rate-limit] Store error (non-blocking):", error);
   }
 }
 
 /**
- * Rate limit middleware wrapper
+ * Wrap a handler with rate limiting
  */
 export function withRateLimit(config: RateLimitConfig) {
   return async (req: Request, user: AuthUser | null): Promise<void> => {
@@ -102,23 +98,21 @@ export function withRateLimit(config: RateLimitConfig) {
 }
 
 /**
- * Pre-configured rate limiters
+ * Pre-configured rate limiters for Arbitask endpoints
  */
 export const RateLimiters = {
-  // Strict limits for auth endpoints
-  auth: { max: 5, window: "15m" },
+  // Auth endpoints — tight
+  auth: { max: 5, window: "15m" } satisfies RateLimitConfig,
 
-  // Moderate limits for mutations
-  createThread: { max: 10, window: "1h" },
-  createComment: { max: 30, window: "1h" },
-  createReview: { max: 5, window: "1h" },
+  // Mutation endpoints
+  createProject: { max: 20, window: "1h" } satisfies RateLimitConfig,
+  createTask: { max: 60, window: "1h" } satisfies RateLimitConfig,
+  createNote: { max: 30, window: "1h" } satisfies RateLimitConfig,
+  generateInvite: { max: 10, window: "1h" } satisfies RateLimitConfig,
 
-  // Loose limits for reads
-  readThread: { max: 100, window: "1m" },
-  readProduct: { max: 100, window: "1m" },
-  search: { max: 50, window: "1m" },
+  // Read endpoints — generous
+  read: { max: 200, window: "1m" } satisfies RateLimitConfig,
 
-  // Very strict for expensive operations
-  upload: { max: 10, window: "1h" },
-  bulkOperation: { max: 5, window: "1h" },
+  // Heavy/expensive operations
+  upload: { max: 10, window: "1h" } satisfies RateLimitConfig,
 };

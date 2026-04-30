@@ -10,7 +10,7 @@
  * - Logging
  */
 
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import {
   withMiddleware,
@@ -19,6 +19,7 @@ import {
   noContentResponse,
   notFoundResponse,
   type RequestContext,
+  type RouteHandler,
 } from "../http";
 import type { RateLimitConfig } from "../middlewares";
 
@@ -129,4 +130,21 @@ export function createGetOneHandler<T>(
 
     return successResponse(data);
   }, config);
+}
+
+/**
+ * Wrap a handler that returns a raw {@link NextResponse} (OpenAPI JSON, HTML, etc.)
+ * with the standard middleware pipeline. Does not wrap the body in {@link successResponse}.
+ */
+export function createRawResponseHandler(
+  handler: RouteHandler,
+  config: HandlerConfig = {}
+): (req: NextRequest) => Promise<NextResponse> {
+  return withMiddleware(handler, {
+    auth: config.auth,
+    optionalAuth: config.optionalAuth,
+    roles: config.roles,
+    rateLimit: config.rateLimit,
+    validateBody: config.validateBody,
+  });
 }
