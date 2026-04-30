@@ -1,0 +1,304 @@
+{
+  "mapping": [
+    {
+      "linearIssueId": "TRI-5",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-5/create-development-branch",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/1",
+      "githubIssueNumber": 1
+    },
+    {
+      "linearIssueId": "TRI-6",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-6/set-up-eslint-and-prettier",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/2",
+      "githubIssueNumber": 2
+    },
+    {
+      "linearIssueId": "TRI-7",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-7/install-and-configure-sentry",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/3",
+      "githubIssueNumber": 3
+    },
+    {
+      "linearIssueId": "TRI-8",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-8/install-vitest-and-add-test-config",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/4",
+      "githubIssueNumber": 4
+    },
+    {
+      "linearIssueId": "TRI-9",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-9/add-swagger-docs-routes",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/5",
+      "githubIssueNumber": 5
+    },
+    {
+      "linearIssueId": "TRI-10",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-10/set-up-css-modules-and-design-tokens",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/6",
+      "githubIssueNumber": 6
+    },
+    {
+      "linearIssueId": "TRI-11",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-11/clean-up-legacy-src-directories",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/7",
+      "githubIssueNumber": 7
+    },
+    {
+      "linearIssueId": "TRI-12",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-12/update-env-example-with-required-variables",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/8",
+      "githubIssueNumber": 8
+    },
+    {
+      "linearIssueId": "TRI-13",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-13/set-up-conventional-commits-tooling",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/9",
+      "githubIssueNumber": 9
+    },
+    {
+      "linearIssueId": "TRI-14",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-14/create-api-changelog-document",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/10",
+      "githubIssueNumber": 10
+    },
+    {
+      "linearIssueId": "TRI-15",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-15/enforce-zod-validation-on-all-api-routes",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/11",
+      "githubIssueNumber": 11
+    },
+    {
+      "linearIssueId": "TRI-16",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-16/establish-automated-testing-baseline",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/12",
+      "githubIssueNumber": 12
+    },
+    {
+      "linearIssueId": "TRI-17",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-17/add-end-to-end-sentry-observability",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/13",
+      "githubIssueNumber": 13
+    },
+    {
+      "linearIssueId": "TRI-18",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-18/retire-legacy-vite-era-src-code",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/14",
+      "githubIssueNumber": 14
+    },
+    {
+      "linearIssueId": "TRI-19",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-19/migrate-inline-styles-to-css-modules",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/15",
+      "githubIssueNumber": 15
+    },
+    {
+      "linearIssueId": "TRI-20",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-20/harden-postgresql-compatibility-in-development",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/16",
+      "githubIssueNumber": 16
+    },
+    {
+      "linearIssueId": "TRI-21",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-21/sanitize-markdown-and-user-input",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/17",
+      "githubIssueNumber": 17
+    },
+    {
+      "linearIssueId": "TRI-22",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-22/apply-rate-limiting-to-sensitive-endpoints",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/18",
+      "githubIssueNumber": 18
+    },
+    {
+      "linearIssueId": "TRI-23",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-23/remove-hardcoded-demo-credentials",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/19",
+      "githubIssueNumber": 19
+    },
+    {
+      "linearIssueId": "TRI-24",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-24/complete-environment-template-coverage",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/20",
+      "githubIssueNumber": 20
+    },
+    {
+      "linearIssueId": "TRI-25",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-25/establish-api-documentation-pipeline",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/21",
+      "githubIssueNumber": 21
+    },
+    {
+      "linearIssueId": "TRI-26",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-26/enforce-eslint-and-prettier-in-ci",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/22",
+      "githubIssueNumber": 22
+    },
+    {
+      "linearIssueId": "TRI-27",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-27/apply-conventional-commit-governance",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/23",
+      "githubIssueNumber": 23
+    },
+    {
+      "linearIssueId": "TRI-28",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-28/establish-development-integration-branch-workflow",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/24",
+      "githubIssueNumber": 24
+    },
+    {
+      "linearIssueId": "TRI-29",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-29/plan-phase-14-time-tracking-and-work-logging",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/25",
+      "githubIssueNumber": 25
+    },
+    {
+      "linearIssueId": "TRI-30",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-30/plan-phase-13-sprint-and-cycle-management",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/26",
+      "githubIssueNumber": 26
+    },
+    {
+      "linearIssueId": "TRI-31",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-31/plan-phase-12-project-management",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/27",
+      "githubIssueNumber": 27
+    },
+    {
+      "linearIssueId": "TRI-32",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-32/plan-phase-11-issue-and-task-management",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/28",
+      "githubIssueNumber": 28
+    },
+    {
+      "linearIssueId": "TRI-33",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-33/plan-phase-16-collaboration-and-communication",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/29",
+      "githubIssueNumber": 29
+    },
+    {
+      "linearIssueId": "TRI-34",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-34/plan-phase-15-analytics-and-reporting",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/30",
+      "githubIssueNumber": 30
+    },
+    {
+      "linearIssueId": "TRI-35",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-35/plan-phase-18-workspace-and-access-control",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/31",
+      "githubIssueNumber": 31
+    },
+    {
+      "linearIssueId": "TRI-36",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-36/plan-phase-17-focus-and-personal-productivity",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/32",
+      "githubIssueNumber": 32
+    },
+    {
+      "linearIssueId": "TRI-37",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-37/implement-sub-issues-and-parent-progress-rollups",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/33",
+      "githubIssueNumber": 33
+    },
+    {
+      "linearIssueId": "TRI-38",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-38/build-issue-templates-and-workspace-label-system",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/34",
+      "githubIssueNumber": 34
+    },
+    {
+      "linearIssueId": "TRI-39",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-39/add-activity-log-and-workspace-audit-trail",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/35",
+      "githubIssueNumber": 35
+    },
+    {
+      "linearIssueId": "TRI-40",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-40/implement-issue-dependency-graph-and-blocker-alerts",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/36",
+      "githubIssueNumber": 36
+    },
+    {
+      "linearIssueId": "TRI-41",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-41/add-milestones-initiatives-and-okr-linking",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/37",
+      "githubIssueNumber": 37
+    },
+    {
+      "linearIssueId": "TRI-42",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-42/implement-delivery-risk-and-scope-creep-scoring",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/38",
+      "githubIssueNumber": 38
+    },
+    {
+      "linearIssueId": "TRI-43",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-43/build-sprint-backlog-and-velocity-mechanics",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/39",
+      "githubIssueNumber": 39
+    },
+    {
+      "linearIssueId": "TRI-44",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-44/implement-advanced-issue-search-and-saved-views",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/40",
+      "githubIssueNumber": 40
+    },
+    {
+      "linearIssueId": "TRI-45",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-45/implement-timesheet-submission-approval-and-export",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/41",
+      "githubIssueNumber": 41
+    },
+    {
+      "linearIssueId": "TRI-46",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-46/build-timer-manual-logging-and-pomodoro-flows",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/42",
+      "githubIssueNumber": 42
+    },
+    {
+      "linearIssueId": "TRI-47",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-47/build-analytics-dashboards-and-comparative-reports",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/43",
+      "githubIssueNumber": 43
+    },
+    {
+      "linearIssueId": "TRI-48",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-48/implement-sprint-planning-goals-and-retrospectives",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/44",
+      "githubIssueNumber": 44
+    },
+    {
+      "linearIssueId": "TRI-49",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-49/implement-collaboration-integrations-and-approval-workflow",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/45",
+      "githubIssueNumber": 45
+    },
+    {
+      "linearIssueId": "TRI-50",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-50/implement-focus-mode-and-smart-next-task",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/46",
+      "githubIssueNumber": 46
+    },
+    {
+      "linearIssueId": "TRI-51",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-51/build-notifications-digests-and-threaded-discussions",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/47",
+      "githubIssueNumber": 47
+    },
+    {
+      "linearIssueId": "TRI-52",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-52/implement-personal-inbox-keyboard-shortcuts-and-recurring-templates",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/48",
+      "githubIssueNumber": 48
+    },
+    {
+      "linearIssueId": "TRI-53",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-53/implement-multi-team-hierarchy-and-granular-rbac",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/49",
+      "githubIssueNumber": 49
+    },
+    {
+      "linearIssueId": "TRI-54",
+      "linearIssueUrl": "https://linear.app/trial-0/issue/TRI-54/implement-custom-team-workflows-and-invite-governance",
+      "githubIssueUrl": "https://github.com/prabuddha03/Arbitask/issues/50",
+      "githubIssueNumber": 50
+    }
+  ]
+}

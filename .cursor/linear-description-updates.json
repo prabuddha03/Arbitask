@@ -1,0 +1,202 @@
+[
+  {
+    "id": "TRI-5",
+    "description": "Linear Issue: https://linear.app/trial-0/issue/TRI-5/create-development-branch\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/1\n"
+  },
+  {
+    "id": "TRI-6",
+    "description": "## Objective\n\nAdd linting and formatting baseline for consistent code quality.\n\n## Acceptance Criteria\n\n* Add `.eslintrc.json` and `.prettierrc`.\n* Add npm scripts for lint/format checks.\n* Ensure Next.js + TypeScript rules work across app, lib, src/modules.\n\n## Relevant Files\n\n* `.eslintrc.json`\n* `.prettierrc`\n* `package.json`\n\n## Notes\n\nRequired bootstrap before feature implementation.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-6/set-up-eslint-and-prettier\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/2\n"
+  },
+  {
+    "id": "TRI-7",
+    "description": "## Objective\n\nEnable Sentry error and performance monitoring per [AGENTS.md](<http://AGENTS.md>).\n\n## Acceptance Criteria\n\n* Install `@sentry/nextjs`.\n* Configure `sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`.\n* Add `withSentryConfig` in `next.config.ts` for source maps.\n* Ensure DSN and auth tokens are env-driven.\n\n## Relevant Files\n\n* `next.config.ts`\n* `sentry.client.config.ts`\n* `sentry.server.config.ts`\n* `se\u2026 (truncated, use `get_issue` for full description)\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-7/install-and-configure-sentry\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/3\n"
+  },
+  {
+    "id": "TRI-8",
+    "description": "## Objective\n\nSet up Vitest unit/integration testing framework baseline.\n\n## Acceptance Criteria\n\n* Install Vitest dependencies.\n* Add `vitest.config.ts` and base test scripts.\n* Ensure path aliases and TS config work in tests.\n\n## Relevant Files\n\n* `package.json`\n* `vitest.config.ts`\n* `tsconfig.json`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-8/install-vitest-and-add-test-config\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/4\n"
+  },
+  {
+    "id": "TRI-9",
+    "description": "## Objective\n\nServe OpenAPI JSON and Swagger UI routes required for API documentation.\n\n## Acceptance Criteria\n\n* Implement `/api/docs` route returning OpenAPI JSON.\n* Implement `/api/docs/ui` route for Swagger UI.\n* Verify docs render and include module swagger definitions.\n\n## Relevant Files\n\n* `app/api/docs/route.ts`\n* `app/api/docs/ui/route.ts`\n* `lib/swagger/config.ts`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-9/add-swagger-docs-routes\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/5\n"
+  },
+  {
+    "id": "TRI-10",
+    "description": "## Objective\n\nEstablish DESIGN.md-compliant token system in global styles and CSS Modules baseline.\n\n## Acceptance Criteria\n\n* Define core color/typography/radius tokens in `app/globals.css`.\n* Ensure Canvas Cream default background and theme variables for dark/light/eye protection.\n* Add CSS Modules usage guidance for new components.\n\n## Relevant Files\n\n* `app/globals.css`\n* `components/**/*.module.css`\n* `DESIGN.md`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-10/set-up-css-modules-and-design-tokens\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/6\n"
+  },
+  {
+    "id": "TRI-11",
+    "description": "## Objective\n\nRemove or migrate legacy Vite SPA directories no longer part of canonical architecture.\n\n## Acceptance Criteria\n\n* Audit `src/components`, `src/constants`, `src/utils`, `src/styles`.\n* Migrate anything still needed to canonical paths.\n* Remove dead legacy code safely.\n\n## Relevant Files\n\n* `src/components/**`\n* `src/constants/**`\n* `src/utils/**`\n* `src/styles/**`\n* `lib/**`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-11/clean-up-legacy-src-directories\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/7\n"
+  },
+  {
+    "id": "TRI-12",
+    "description": "## Objective\n\nAdd complete environment variable template for new infrastructure.\n\n## Acceptance Criteria\n\n* Update `.env.local.example` with Auth, DB, R2, Sentry, Browserbase vars.\n* Keep secrets absent and values blank/safe defaults.\n* Align key names with [AGENTS.md](<http://AGENTS.md>) environment contract.\n\n## Relevant Files\n\n* `.env.local.example`\n* `AGENTS.md`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-12/update-env-example-with-required-variables\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/8\n"
+  },
+  {
+    "id": "TRI-13",
+    "description": "## Objective\n\nEnforce conventional commit format via local hooks and commit linting.\n\n## Acceptance Criteria\n\n* Install/configure `commitlint` and `husky`.\n* Add commit-msg hook validating `feat(scope): description [linear:ID]` style.\n* Document local setup command.\n\n## Relevant Files\n\n* `package.json`\n* `.husky/**`\n* `commitlint.config.*`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-13/set-up-conventional-commits-tooling\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/9\n"
+  },
+  {
+    "id": "TRI-14",
+    "description": "## Objective\n\nCreate baseline API changelog file for all route additions/changes.\n\n## Acceptance Criteria\n\n* Add `docs/API_CHANGELOG.md`.\n* Define changelog format (date, endpoint, change type, compatibility notes).\n* Include initial baseline entry.\n\n## Relevant Files\n\n* `docs/API_CHANGELOG.md`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-14/create-api-changelog-document\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/10\n"
+  },
+  {
+    "id": "TRI-15",
+    "description": "## Objective\n\nEnsure every API route validates request input with Zod before business logic execution.\n\n## Overlap Verification\n\n* If route already has schema validation, verify it is wired through handler factories and rejects invalid payloads.\n\n## Acceptance Criteria\n\n* Every route uses schema from `src/modules/*/*.schema.ts`.\n* Route handlers are thin controllers using factory validation options.\n* Invalid input returns standard error shape.\n\u2026 (truncated, use `get_issue` for full description)\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-15/enforce-zod-validation-on-all-api-routes\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/11\n"
+  },
+  {
+    "id": "TRI-16",
+    "description": "## Objective\n\nIntroduce unit, integration, and E2E scaffolding where none exists.\n\n## Overlap Verification\n\n* Validate Vitest bootstrap and expand with required test directories and examples.\n\n## Acceptance Criteria\n\n* `tests/unit` and `tests/e2e` exist with starter coverage.\n* Route, schema, service, and repository test patterns are documented.\n* CI test scripts execute successfully.\n\n## Relevant Files\n\n* `vitest.config.ts`\n* `tests/unit/**`\n* `tests/e2e/**`\n* `package.json`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-16/establish-automated-testing-baseline\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/12\n"
+  },
+  {
+    "id": "TRI-17",
+    "description": "## Objective\n\nClose observability debt by enabling error + performance tracing coverage.\n\n## Overlap Verification\n\n* Confirm bootstrap Sentry setup exists and is active in all runtimes.\n\n## Acceptance Criteria\n\n* API route errors are captured.\n* Transaction traces are recorded for API routes.\n* Source maps upload in build.\n* Alert policies for error rate and latency are documented.\n\n## Relevant Files\n\n* `next.config.ts`\n* `sentry.*.config.ts`\n* `app/api/**/route.ts`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-17/add-end-to-end-sentry-observability\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/13\n"
+  },
+  {
+    "id": "TRI-18",
+    "description": "## Objective\n\nEliminate duplicated legacy architecture paths and keep canonical structure only.\n\n## Overlap Verification\n\n* Validate bootstrap cleanup fully removes obsolete paths and references.\n\n## Acceptance Criteria\n\n* No active imports from legacy `src/components`, `src/constants`, `src/utils`, `src/styles`.\n* Canonical files in `components`, `lib`, and `src/modules` are authoritative.\n\n## Relevant Files\n\n* `src/components/**`\n* `src/consta\u2026 (truncated, use `get_issue` for full description)\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-18/retire-legacy-vite-era-src-code\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/14\n"
+  },
+  {
+    "id": "TRI-19",
+    "description": "## Objective\n\nRemove inline style debt and align UI with [DESIGN.md](<http://DESIGN.md>) token system.\n\n## Overlap Verification\n\n* Reuse bootstrap token setup in `app/globals.css`.\n\n## Acceptance Criteria\n\n* Inline styles in core UI surfaces are migrated to `.module.css`.\n* Theme tokens are used instead of hardcoded colors/fonts.\n* WCAG contrast remains compliant.\n\n## Relevant Files\n\n* `components/**`\n* `app/**`\n* `app/globals.css`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-19/migrate-inline-styles-to-css-modules\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/15\n"
+  },
+  {
+    "id": "TRI-20",
+    "description": "## Objective\n\nResolve SQLite-only assumptions and guarantee PostgreSQL-compatible behavior.\n\n## Acceptance Criteria\n\n* Audit schema and queries for PostgreSQL compatibility.\n* Validate migrations and runtime behavior under PostgreSQL.\n* Document any provider-specific constraints.\n\n## Relevant Files\n\n* `prisma/schema.prisma`\n* `lib/db.ts`\n* `src/modules/**/**/*.repository.ts`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-20/harden-postgresql-compatibility-in-development\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/16\n"
+  },
+  {
+    "id": "TRI-21",
+    "description": "## Objective\n\nMitigate XSS risk by sanitizing markdown rendering and untrusted rich-text inputs.\n\n## Acceptance Criteria\n\n* Sanitize markdown output and user-generated HTML.\n* Validate sanitizer policy for links/images/scripts.\n* Add regression tests for malicious payloads.\n\n## Relevant Files\n\n* `lib/markdown.ts`\n* `components/**`\n* `app/api/**`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-21/sanitize-markdown-and-user-input\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/17\n"
+  },
+  {
+    "id": "TRI-22",
+    "description": "## Objective\n\nProtect auth and invite endpoints from abuse with middleware rate limiting.\n\n## Acceptance Criteria\n\n* Rate limit applied to auth and invite endpoints.\n* Limits configurable via environment variables.\n* Rejection responses follow standard error shape.\n\n## Relevant Files\n\n* `lib/middlewares/**`\n* `app/api/auth/**`\n* `app/api/invites/**`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-22/apply-rate-limiting-to-sensitive-endpoints\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/18\n"
+  },
+  {
+    "id": "TRI-23",
+    "description": "## Objective\n\nEliminate hardcoded demo credentials from source and move to secure configuration.\n\n## Acceptance Criteria\n\n* No plaintext demo credentials in `lib/auth.ts`.\n* Demo access strategy documented and env-backed.\n* Security review confirms no credential leakage in repo.\n\n## Relevant Files\n\n* `lib/auth.ts`\n* `.env.local.example`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-23/remove-hardcoded-demo-credentials\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/19\n"
+  },
+  {
+    "id": "TRI-24",
+    "description": "## Objective\n\nEnsure `.env.local.example` includes all required keys for current and upcoming infrastructure.\n\n## Overlap Verification\n\n* Confirm bootstrap env template updates include R2, Sentry, Browserbase.\n\n## Acceptance Criteria\n\n* Required vars are documented and grouped by domain.\n* No missing key blocks local setup.\n* Naming is consistent with runtime code.\n\n## Relevant Files\n\n* `.env.local.example`\n* `AGENTS.md`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-24/complete-environment-template-coverage\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/20\n"
+  },
+  {
+    "id": "TRI-25",
+    "description": "## Objective\n\nClose API docs debt with OpenAPI and Postman artifacts.\n\n## Overlap Verification\n\n* Confirm bootstrap Swagger routes exist and are complete.\n\n## Acceptance Criteria\n\n* Every endpoint has OpenAPI docs.\n* Postman collection and environment are exported in `docs/`.\n* Documentation update process is defined.\n\n## Relevant Files\n\n* `lib/swagger/**`\n* `app/api/**/route.ts`\n* `docs/arbitask-api.postman_collection.json`\n* `docs/arbitask-api.postman_environment.json`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-25/establish-api-documentation-pipeline\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/21\n"
+  },
+  {
+    "id": "TRI-26",
+    "description": "## Objective\n\nPromote lint/format checks from local setup to enforced CI quality gates.\n\n## Overlap Verification\n\n* Confirm bootstrap lint config exists and is stable.\n\n## Acceptance Criteria\n\n* CI runs lint and format check on pull requests.\n* Failing checks block merge.\n* Project scripts and docs reflect required commands.\n\n## Relevant Files\n\n* `.github/workflows/**`\n* `package.json`\n* `.eslintrc.json`\n* `.prettierrc`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-26/enforce-eslint-and-prettier-in-ci\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/22\n"
+  },
+  {
+    "id": "TRI-27",
+    "description": "## Objective\n\nEnsure conventional commit policy is consistently enforced in team workflow.\n\n## Overlap Verification\n\n* Verify bootstrap hook and commitlint setup is active for all contributors.\n\n## Acceptance Criteria\n\n* Commit message format is validated pre-commit or in CI.\n* Developer docs include expected format with Linear reference.\n\n## Relevant Files\n\n* `.husky/**`\n* `commitlint.config.*`\n* `.github/workflows/**`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-27/apply-conventional-commit-governance\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/23\n"
+  },
+  {
+    "id": "TRI-28",
+    "description": "## Objective\n\nClose branch strategy debt by enforcing development branch workflow and PR policy.\n\n## Overlap Verification\n\n* Confirm bootstrap branch creation and protections are complete.\n\n## Acceptance Criteria\n\n* `development` is the integration branch for all feature work.\n* PR base defaults to `development`.\n* Documentation and branch protections enforce policy.\n\n## Relevant Files\n\n* `.github/**`\n* `AGENTS.md`\n* `REQUIREMENTS.md`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-28/establish-development-integration-branch-workflow\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/24\n"
+  },
+  {
+    "id": "TRI-29",
+    "description": "## Objective\n\nDeliver timer, worklog, and timesheet workflow capabilities.\n\n## Architecture Rules\n\n* Module domain in `src/modules/time-tracking/` and `src/modules/timesheets/`.\n* Route handlers in `app/api/time-entries/**` and `app/api/timesheets/**` using factories.\n* Zod + OpenAPI required.\n\n## Acceptance Criteria\n\n* Parent umbrella issue for timer, manual entries, pomodoro, billable flags, estimate-vs-actual, submissions, approvals, exports.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-29/plan-phase-14-time-tracking-and-work-logging\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/25\n"
+  },
+  {
+    "id": "TRI-30",
+    "description": "## Objective\n\nDeliver sprint planning/execution/reporting primitives.\n\n## Architecture Rules\n\n* `src/modules/sprints/` and related analytics modules.\n* Thin controllers in `app/api/sprints/**`.\n* Validation via Zod and handler factories.\n\n## Acceptance Criteria\n\n* Parent umbrella issue for sprint creation, backlog, rollover, burndown, velocity, planning, goal tracking, retrospectives.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-30/plan-phase-13-sprint-and-cycle-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/26\n"
+  },
+  {
+    "id": "TRI-31",
+    "description": "## Objective\n\nDeliver Phase 1.2 project-level planning and governance features.\n\n## Architecture Rules\n\n* Domain modules under `src/modules/projects/` (+ `initiatives/` and `milestones/` as needed).\n* API routes in `app/api/projects/**` using handler factories.\n* Zod + OpenAPI mandatory.\n\n## Acceptance Criteria\n\n* Parent umbrella issue for milestones, initiatives, OKR linking, templates, risk score, and scope creep detection.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-31/plan-phase-12-project-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/27\n"
+  },
+  {
+    "id": "TRI-32",
+    "description": "## Objective\n\nDeliver Phase 1.1 capabilities for issue/task management.\n\n## Architecture Rules\n\n* Business logic in `src/modules/tasks/*.service.ts`.\n* Prisma access in `src/modules/tasks/*.repository.ts`.\n* Zod schemas in `src/modules/tasks/*.schema.ts`.\n* OpenAPI docs in `src/modules/tasks/*.swagger.ts`.\n* Thin controllers in `app/api/tasks/**/route.ts` using handler factories.\n\n## Acceptance Criteria\n\n* Parent umbrella issue tracking all Phas\u2026 (truncated, use `get_issue` for full description)\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-32/plan-phase-11-issue-and-task-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/28\n"
+  },
+  {
+    "id": "TRI-33",
+    "description": "## Objective\n\nDeliver communication and workflow integrations for team collaboration.\n\n## Architecture Rules\n\n* Notification/event logic in service layer modules.\n* Integration adapters encapsulated in dedicated modules.\n* Thin controllers with validated payloads.\n\n## Acceptance Criteria\n\n* Parent umbrella issue for mentions, notifications, digests, Slack/GitHub/GitLab/webhooks, approvals, standup digest, threaded discussion.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-33/plan-phase-16-collaboration-and-communication\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/29\n"
+  },
+  {
+    "id": "TRI-34",
+    "description": "## Objective\n\nDeliver operational analytics, dashboards, and reporting for leadership and teams.\n\n## Architecture Rules\n\n* Analytics logic in service layer modules (`src/modules/analytics/`).\n* Query optimization in repositories.\n* Thin API controllers with paginated handlers.\n\n## Acceptance Criteria\n\n* Parent umbrella issue for cycle time, throughput, workload, estimate accuracy, burnup, time distribution, sprint comparison.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-34/plan-phase-15-analytics-and-reporting\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/30\n"
+  },
+  {
+    "id": "TRI-35",
+    "description": "## Objective\n\nDeliver multi-team hierarchy and granular access control for workspace scale.\n\n## Architecture Rules\n\n* Access control checks in service layer only.\n* Membership/role repositories under `src/modules/members` and related modules.\n* Thin route handlers + validation.\n\n## Acceptance Criteria\n\n* Parent umbrella issue for team hierarchy, permission model, invite management, preferences, and auth extensions.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-35/plan-phase-18-workspace-and-access-control\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/31\n"
+  },
+  {
+    "id": "TRI-36",
+    "description": "## Objective\n\nDeliver focused execution UX for individual contributors.\n\n## Architecture Rules\n\n* Task recommendation logic in service layer.\n* Personal inbox data model in dedicated module.\n* UI adheres to [DESIGN.md](<http://DESIGN.md>) and CSS Modules.\n\n## Acceptance Criteria\n\n* Parent umbrella issue for My Lens, focus mode, smart next task, personal inbox, keyboard navigation, recurring templates.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-36/plan-phase-17-focus-and-personal-productivity\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/32\n"
+  },
+  {
+    "id": "TRI-37",
+    "description": "## Objective\n\nAdd parent-child issue decomposition with aggregate progress metrics.\n\n## Acceptance Criteria\n\n* Data model supports parent-child issue links.\n* Parent issues display completion rollup from child statuses.\n* APIs and UI support create/read/update flows.\n\n## Architecture\n\n* Module files in `src/modules/tasks/` (`schema`, `repository`, `service`, `swagger`).\n* Thin controllers in `app/api/tasks/**` via handler factories.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-37/implement-sub-issues-and-parent-progress-rollups\n\n\nDepends on:\n- TRI-32: https://linear.app/trial-0/issue/TRI-32/plan-phase-11-issue-and-task-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/33\n"
+  },
+  {
+    "id": "TRI-38",
+    "description": "## Objective\n\nProvide reusable issue templates and workspace/project label taxonomy.\n\n## Acceptance Criteria\n\n* CRUD for issue templates (bug/feature/tech-debt/incident).\n* Workspace and project label scopes for filtering.\n* Template application when creating issues.\n\n## Architecture\n\n* New modules in `src/modules/issue-templates/` and label extensions.\n* Thin routes in `app/api/issue-templates/**` and `app/api/labels/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-38/build-issue-templates-and-workspace-label-system\n\n\nDepends on:\n- TRI-32: https://linear.app/trial-0/issue/TRI-32/plan-phase-11-issue-and-task-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/34\n"
+  },
+  {
+    "id": "TRI-39",
+    "description": "## Objective\n\nTrack immutable issue-level history and workspace-wide audit mutations.\n\n## Acceptance Criteria\n\n* Capture who/what/when for issue field changes.\n* Add workspace audit stream for compliance events.\n* Query endpoints with pagination and filters.\n\n## Architecture\n\n* Module files in `src/modules/audit/`.\n* Paginated handlers in `app/api/audit/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-39/add-activity-log-and-workspace-audit-trail\n\n\nDepends on:\n- TRI-32: https://linear.app/trial-0/issue/TRI-32/plan-phase-11-issue-and-task-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/35\n"
+  },
+  {
+    "id": "TRI-40",
+    "description": "## Objective\n\nSupport blocked-by/blocking relationships with cascading overdue alerts.\n\n## Acceptance Criteria\n\n* Store issue dependency edges.\n* Prevent invalid cycles where required.\n* Trigger alerting when blockers become overdue.\n\n## Architecture\n\n* Task dependency logic in `src/modules/tasks/*.service.ts`.\n* Route handlers in `app/api/tasks/**` via factories.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-40/implement-issue-dependency-graph-and-blocker-alerts\n\n\nDepends on:\n- TRI-32: https://linear.app/trial-0/issue/TRI-32/plan-phase-11-issue-and-task-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/36\n"
+  },
+  {
+    "id": "TRI-41",
+    "description": "## Objective\n\nIntroduce strategic planning layer: milestones, initiatives, and OKR linkage.\n\n## Acceptance Criteria\n\n* Milestone CRUD with project progress rollups.\n* Initiative grouping across projects.\n* OKR link model with auto-computed completion.\n\n## Architecture\n\n* Modules in `src/modules/milestones/`, `initiatives/`, `okrs/`.\n* Thin routes in `app/api/milestones/**`, `initiatives/**`, `okrs/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-41/add-milestones-initiatives-and-okr-linking\n\n\nDepends on:\n- TRI-31: https://linear.app/trial-0/issue/TRI-31/plan-phase-12-project-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/37\n"
+  },
+  {
+    "id": "TRI-42",
+    "description": "## Objective\n\nCompute project risk and scope creep signals from execution data.\n\n## Acceptance Criteria\n\n* Risk score 0-100 from overdue rate, velocity gap, blocker count.\n* Scope creep alert when time exceeds 130% estimate or post-sprint task additions.\n* Expose metrics in project APIs and views.\n\n## Architecture\n\n* Scoring logic in `src/modules/projects/*.service.ts` and analytics modules.\n* Thin routes in `app/api/projects/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-42/implement-delivery-risk-and-scope-creep-scoring\n\n\nDepends on:\n- TRI-31: https://linear.app/trial-0/issue/TRI-31/plan-phase-12-project-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/38\n"
+  },
+  {
+    "id": "TRI-43",
+    "description": "## Objective\n\nImplement sprint backlog operations, rollover, burndown, and velocity.\n\n## Acceptance Criteria\n\n* Sprint backlog with drag-to-add issues.\n* End-of-sprint rollover helper for incomplete issues.\n* Burndown and velocity calculations exposed via API.\n\n## Architecture\n\n* `src/modules/sprints/` + analytics repositories.\n* Thin routes in `app/api/sprints/**` using factory handlers.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-43/build-sprint-backlog-and-velocity-mechanics\n\n\nDepends on:\n- TRI-30: https://linear.app/trial-0/issue/TRI-30/plan-phase-13-sprint-and-cycle-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/39\n"
+  },
+  {
+    "id": "TRI-44",
+    "description": "## Objective\n\nDeliver full-text search, natural-language search, and saved filter views.\n\n## Acceptance Criteria\n\n* Search across title/description/comments with chained filters.\n* Natural language query parsing for common issue intents.\n* Save personal and shared views.\n\n## Architecture\n\n* Search services in `src/modules/search/`.\n* Thin routes in `app/api/search/**` and `app/api/views/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-44/implement-advanced-issue-search-and-saved-views\n\n\nDepends on:\n- TRI-32: https://linear.app/trial-0/issue/TRI-32/plan-phase-11-issue-and-task-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/40\n"
+  },
+  {
+    "id": "TRI-45",
+    "description": "## Objective\n\nAdd weekly timesheet workflow with manager approval and CSV/PDF export.\n\n## Acceptance Criteria\n\n* Weekly editable timesheet grid.\n* Submit locks timesheet for edits.\n* Manager approve/reject with reasons and audit trail.\n* Export to CSV/PDF.\n\n## Architecture\n\n* Modules in `src/modules/timesheets/`.\n* Thin routes in `app/api/timesheets/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-45/implement-timesheet-submission-approval-and-export\n\n\nDepends on:\n- TRI-29: https://linear.app/trial-0/issue/TRI-29/plan-phase-14-time-tracking-and-work-logging\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/41\n"
+  },
+  {
+    "id": "TRI-46",
+    "description": "## Objective\n\nImplement one-click timer, manual entries, pomodoro sessions, and single-active-timer guard.\n\n## Acceptance Criteria\n\n* Start/stop timer on issue cards.\n* Manual retroactive entry support.\n* Pomodoro sessions auto-log time with break prompts.\n* Prevent concurrent active timers.\n\n## Architecture\n\n* Modules in `src/modules/time-tracking/`.\n* Thin routes in `app/api/time-entries/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-46/build-timer-manual-logging-and-pomodoro-flows\n\n\nDepends on:\n- TRI-29: https://linear.app/trial-0/issue/TRI-29/plan-phase-14-time-tracking-and-work-logging\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/42\n"
+  },
+  {
+    "id": "TRI-47",
+    "description": "## Objective\n\nDeliver CTO dashboard and core analytics reports for delivery and capacity insights.\n\n## Acceptance Criteria\n\n* Dashboard metrics: velocity, blockers, workload, project health.\n* Reports: cycle time, throughput, estimate accuracy, burnup, sprint comparison.\n* APIs optimized for filterable time windows.\n\n## Architecture\n\n* `src/modules/analytics/` repositories/services/schemas/swagger.\n* Thin routes in `app/api/analytics/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-47/build-analytics-dashboards-and-comparative-reports\n\n\nDepends on:\n- TRI-34: https://linear.app/trial-0/issue/TRI-34/plan-phase-15-analytics-and-reporting\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/43\n"
+  },
+  {
+    "id": "TRI-48",
+    "description": "## Objective\n\nDeliver sprint planning capacity view, goal tracking, and retrospective artifacts.\n\n## Acceptance Criteria\n\n* Planning view with backlog and sprint board capacity indicators.\n* Goal progress ring from linked issues.\n* Retrospective template linked to sprint data.\n\n## Architecture\n\n* Sprint logic in service layer modules.\n* Thin routes in `app/api/sprints/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-48/implement-sprint-planning-goals-and-retrospectives\n\n\nDepends on:\n- TRI-30: https://linear.app/trial-0/issue/TRI-30/plan-phase-13-sprint-and-cycle-management\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/44\n"
+  },
+  {
+    "id": "TRI-49",
+    "description": "## Objective\n\nDeliver Slack, GitHub/GitLab, and webhook integrations plus close-approval gate workflow.\n\n## Acceptance Criteria\n\n* Integration events map to issue lifecycle updates.\n* Branch/PR links sync to issues.\n* Configurable approval-before-close workflow with auto-reopen on rejection.\n\n## Architecture\n\n* Integration modules under `src/modules/integrations/`.\n* Thin routes in `app/api/integrations/**` and approvals endpoints.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-49/implement-collaboration-integrations-and-approval-workflow\n\n\nDepends on:\n- TRI-33: https://linear.app/trial-0/issue/TRI-33/plan-phase-16-collaboration-and-communication\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/45\n"
+  },
+  {
+    "id": "TRI-50",
+    "description": "## Objective\n\nDeliver individual productivity suite including My Lens, focus mode, and recommendation engine.\n\n## Acceptance Criteria\n\n* My Lens prioritization view.\n* Full-screen focus mode with task details/timer/worklog.\n* Smart next-task suggestions using priority/sprint/dependency signals.\n\n## Architecture\n\n* Service-layer recommendation logic in `src/modules/tasks/` or dedicated focus module.\n* UI in `components/views/**` with CSS Modules.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-50/implement-focus-mode-and-smart-next-task\n\n\nDepends on:\n- TRI-36: https://linear.app/trial-0/issue/TRI-36/plan-phase-17-focus-and-personal-productivity\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/46\n"
+  },
+  {
+    "id": "TRI-51",
+    "description": "## Objective\n\nImplement mentions, in-app notifications, digest scheduling, and threaded comments with attachments.\n\n## Acceptance Criteria\n\n* Mention-triggered in-app + email notifications.\n* Daily/weekly digest scheduler.\n* Threaded comments with reactions and attachment support.\n\n## Architecture\n\n* Modules in `src/modules/notifications/` and comment modules.\n* Thin routes in `app/api/notifications/**` and `app/api/comments/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-51/build-notifications-digests-and-threaded-discussions\n\n\nDepends on:\n- TRI-33: https://linear.app/trial-0/issue/TRI-33/plan-phase-16-collaboration-and-communication\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/47\n"
+  },
+  {
+    "id": "TRI-52",
+    "description": "## Objective\n\nComplete personal productivity capability with private inbox, keyboard-first UX, and recurring task automation.\n\n## Acceptance Criteria\n\n* Private personal task inbox separated from team boards.\n* Keyboard shortcuts for core actions.\n* Recurring templates generate scheduled tasks.\n\n## Architecture\n\n* Modules for recurring templates and personal tasks.\n* Thin routes in `app/api/personal-tasks/**` and `app/api/recurring/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-52/implement-personal-inbox-keyboard-shortcuts-and-recurring-templates\n\n\nDepends on:\n- TRI-36: https://linear.app/trial-0/issue/TRI-36/plan-phase-17-focus-and-personal-productivity\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/48\n"
+  },
+  {
+    "id": "TRI-53",
+    "description": "## Objective\n\nImplement Workspace -> Teams -> Projects -> Issues hierarchy and enforce role-based permissions.\n\n## Acceptance Criteria\n\n* Team model and membership hierarchy support.\n* Fine-grained Owner/Admin/Member/Viewer permissions.\n* Service-layer authorization checks for all protected operations.\n\n## Architecture\n\n* Modules in `src/modules/members/`, `src/modules/teams/`, related services.\n* Thin routes in `app/api/teams/**`, `app/api/members/**`.\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-53/implement-multi-team-hierarchy-and-granular-rbac\n\n\nDepends on:\n- TRI-35: https://linear.app/trial-0/issue/TRI-35/plan-phase-18-workspace-and-access-control\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/49\n"
+  },
+  {
+    "id": "TRI-54",
+    "description": "## Objective\n\nSupport customizable status columns per team and robust invite lifecycle controls.\n\n## Acceptance Criteria\n\n* Team-specific workflow states configurable through API/UI.\n* Invite via email/link with role assignment and revocation.\n* Preference settings include theme, notifications, timezone, working hours.\n\n## Architecture\n\n* Modules in `src/modules/workflows/`, `invites/`, `members/`.\n* Thin routes in `app/api/workflows/**`, `app/a\u2026 (truncated, use `get_issue` for full description)\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-54/implement-custom-team-workflows-and-invite-governance\n\n\nDepends on:\n- TRI-35: https://linear.app/trial-0/issue/TRI-35/plan-phase-18-workspace-and-access-control\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/50\n"
+  }
+]
