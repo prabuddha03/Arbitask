@@ -24,7 +24,7 @@ export class BaseService<T, CreateInput = any, UpdateInput = any, WhereInput = a
   async findMany(
     page: number,
     limit: number,
-    userId?: number
+    userId?: string
   ): Promise<{ items: T[]; total: number }> {
     const filter: any = {};
 
@@ -38,7 +38,7 @@ export class BaseService<T, CreateInput = any, UpdateInput = any, WhereInput = a
   /**
    * Find one item by ID with optional user filter
    */
-  async findById(id: string | number, userId?: number): Promise<T | null> {
+  async findById(id: string | number, userId?: string): Promise<T | null> {
     const filter: any = {};
 
     if (userId) {
@@ -52,7 +52,7 @@ export class BaseService<T, CreateInput = any, UpdateInput = any, WhereInput = a
    * Create a new item
    * Automatically injects userId if provided
    */
-  async create(data: any, userId?: number): Promise<T> {
+  async create(data: any, userId?: string): Promise<T> {
     const createData = { ...data };
 
     if (userId) {
@@ -66,7 +66,7 @@ export class BaseService<T, CreateInput = any, UpdateInput = any, WhereInput = a
    * Update an item
    * Enforces ownership check if userId is provided
    */
-  async update(id: string | number, data: any, userId?: number): Promise<T | null> {
+  async update(id: string | number, data: any, userId?: string): Promise<T | null> {
     const filter: any = {};
 
     if (userId) {
@@ -87,7 +87,7 @@ export class BaseService<T, CreateInput = any, UpdateInput = any, WhereInput = a
    * Delete an item
    * Enforces ownership check if userId is provided
    */
-  async delete(id: string | number, userId?: number): Promise<void> {
+  async delete(id: string | number, userId?: string): Promise<void> {
     const filter: any = {};
 
     if (userId) {

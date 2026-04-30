@@ -62,16 +62,16 @@ export function ListView({ project, projects }: ListViewProps) {
     : null;
   const detailProject = detailEntry?._project || null;
 
-  function handleUpdateTask(taskId: string, updates: Record<string, unknown>) {
-    startTransition(() => updateTask(taskId, updates as Parameters<typeof updateTask>[1]));
+  async function handleUpdateTask(taskId: string, updates: Record<string, unknown>) {
+    startTransition(() => { void updateTask(taskId, updates as Parameters<typeof updateTask>[1]); });
   }
 
-  function handleDeleteTask(taskId: string) {
-    startTransition(() => deleteTask(taskId));
+  async function handleDeleteTask(taskId: string) {
+    startTransition(() => { void deleteTask(taskId); });
   }
 
-  function handleAssigneeChange(taskId: string, userId: string, selected: boolean) {
-    startTransition(() => selected ? addAssignee(taskId, userId) : removeAssignee(taskId, userId));
+  async function handleAssigneeChange(taskId: string, userId: string, selected: boolean) {
+    startTransition(() => { void (selected ? addAssignee(taskId, userId) : removeAssignee(taskId, userId)); });
   }
 
   if (!sorted.length) return <Empty icon="📝" title="No tasks yet" sub="Add tasks from Kanban view" />;

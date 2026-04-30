@@ -159,7 +159,7 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
             const pid = data.projectId || activeProject?.id;
             if (!pid) return;
             setShowAddTask(false);
-            startTransition(() => createTask({ projectId: pid, title: data.title, type: data.type, status: data.status, startDate: data.startDate || null, dueDate: data.dueDate || null }));
+            startTransition(() => { void createTask({ projectId: pid, title: data.title, type: data.type, status: data.status, startDate: data.startDate || null, dueDate: data.dueDate || null }); });
           }}
         />
       )}
@@ -186,10 +186,10 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
           onClose={() => setShowProjectSettings(false)}
           onUpdate={async (updates) => {
             setShowProjectSettings(false);
-            startTransition(() => updateProject(activeProject.id, { name: updates.name, description: updates.description, colorId: updates.iconId }));
+            startTransition(() => { void updateProject(activeProject.id, { name: updates.name, description: updates.description, colorId: updates.iconId }); });
           }}
           onRemoveMember={async (memberId) => {
-            startTransition(() => removeMember(memberId));
+            startTransition(() => { void removeMember(memberId); });
           }}
         />
       )}

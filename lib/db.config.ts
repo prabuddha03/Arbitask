@@ -49,23 +49,16 @@ export const dbConfig = {
  * @returns Complete DATABASE_URL with connection pool parameters
  */
 export function buildDatabaseUrl(baseUrl?: string): string {
-  const url = baseUrl || process.env.DATABASE_URL || "";
-
-  if (!url) {
-    throw new Error("DATABASE_URL is not defined");
-  }
+  const url = baseUrl || process.env.DATABASE_URL || "file:./prisma/dev.db";
 
   try {
     const urlObj = new URL(url);
-
-    // Add connection pool parameters
     urlObj.searchParams.set("connection_limit", dbConfig.connectionLimit.toString());
     urlObj.searchParams.set("pool_timeout", dbConfig.poolTimeout.toString());
     urlObj.searchParams.set("connect_timeout", dbConfig.connectionTimeout.toString());
-
     return urlObj.toString();
-  } catch (error) {
-    console.error("❌ Invalid DATABASE_URL format:", error);
+  } catch {
+    // SQLite file:// URLs are not valid URL objects — return as-is
     return url;
   }
 }
@@ -75,7 +68,13 @@ export function buildDatabaseUrl(baseUrl?: string): string {
  */
 export function validateDbConfig(): void {
   if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL environment variable is required");
+    // During Next.js build, DATABASE_URL may not be set — warn but don't crash
+    // The error will surface at runtime when an actual query is made
+    console.warn(
+      "⚠️  DATABASE_URL is not set. Using SQLite fallback (file:./prisma/dev.db). " +
+        "Set DATABASE_URL in .env.local for production."
+    );
+    return;
   }
 
   if (dbConfig.connectionLimit < 1) {

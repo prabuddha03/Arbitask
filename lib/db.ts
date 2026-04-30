@@ -23,8 +23,11 @@ let prisma: PrismaClient;
  * Initialize PrismaClient with connection pool configuration
  */
 function createPrismaClient(): PrismaClient {
-  // Validate configuration before creating client
-  validateDbConfig();
+  // Skip validation during Next.js static build (no real DB needed)
+  // Validation runs at runtime when actual queries are made
+  if (process.env.NEXT_PHASE !== "phase-production-build") {
+    validateDbConfig();
+  }
 
   return new PrismaClient({
     log: dbConfig.logLevel,

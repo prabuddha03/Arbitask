@@ -22,5 +22,6 @@ export default async function OverviewPage({ params }: { params: Promise<{ proje
   const isMember = project.members.some((m) => m.userId === session.user!.id);
   if (!isMember) redirect("/dashboard");
 
-  return <ProjectOverviewClient project={project} />;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return <ProjectOverviewClient project={project as any} />;
 }

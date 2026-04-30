@@ -47,7 +47,7 @@ export function ProjectOverviewClient({ project }: ProjectOverviewClientProps) {
   useEffect(() => { if (editingDesc) descRef.current?.focus(); }, [editingDesc]);
 
   function patch(data: Record<string, string | null>) {
-    startTransition(() => updateProject(project.id, data));
+    startTransition(() => { void updateProject(project.id, data); });
   }
 
   function saveName() {

@@ -61,26 +61,26 @@ export function KanbanView({ project, projects, initialAddStatus }: KanbanViewPr
     : null;
   const detailProject = detailTaskEntry?._project || null;
 
-  function handleUpdateTaskStatus(taskId: string, newStatus: string) {
-    startTransition(() => updateTask(taskId, { status: newStatus }));
+  async function handleUpdateTaskStatus(taskId: string, newStatus: string) {
+    startTransition(() => { void updateTask(taskId, { status: newStatus }); });
   }
 
-  function handleCreateTask(data: { title: string; type: string; status: string; startDate: string; dueDate: string; projectId?: string }) {
+  async function handleCreateTask(data: { title: string; type: string; status: string; startDate: string; dueDate: string; projectId?: string }) {
     const pid = data.projectId || project?.id;
     if (!pid) return;
-    startTransition(() => createTask({ projectId: pid, title: data.title, type: data.type, status: data.status, startDate: data.startDate || null, dueDate: data.dueDate || null }));
+    startTransition(() => { void createTask({ projectId: pid, title: data.title, type: data.type, status: data.status, startDate: data.startDate || null, dueDate: data.dueDate || null }); });
   }
 
-  function handleDeleteTask(taskId: string) {
-    startTransition(() => deleteTask(taskId));
+  async function handleDeleteTask(taskId: string) {
+    startTransition(() => { void deleteTask(taskId); });
   }
 
-  function handleUpdateTask(taskId: string, updates: Record<string, unknown>) {
-    startTransition(() => updateTask(taskId, updates as Parameters<typeof updateTask>[1]));
+  async function handleUpdateTask(taskId: string, updates: Record<string, unknown>) {
+    startTransition(() => { void updateTask(taskId, updates as Parameters<typeof updateTask>[1]); });
   }
 
-  function handleAssigneeChange(taskId: string, userId: string, selected: boolean) {
-    startTransition(() => selected ? addAssignee(taskId, userId) : removeAssignee(taskId, userId));
+  async function handleAssigneeChange(taskId: string, userId: string, selected: boolean) {
+    startTransition(() => { void (selected ? addAssignee(taskId, userId) : removeAssignee(taskId, userId)); });
   }
 
   if (allProjects.length === 0) {

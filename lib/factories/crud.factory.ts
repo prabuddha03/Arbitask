@@ -27,12 +27,12 @@ export interface CrudService<T> {
   findMany: (
     page: number,
     limit: number,
-    userId?: number
+    userId?: string
   ) => Promise<{ items: T[]; total: number }>;
-  findById: (id: number | string, userId?: number) => Promise<T | null>;
-  create: (data: any, userId?: number) => Promise<T>;
-  update: (id: number | string, data: any, userId?: number) => Promise<T | null>;
-  delete: (id: number | string, userId?: number) => Promise<void>;
+  findById: (id: number | string, userId?: string) => Promise<T | null>;
+  create: (data: any, userId?: string) => Promise<T>;
+  update: (id: number | string, data: any, userId?: string) => Promise<T | null>;
+  delete: (id: number | string, userId?: string) => Promise<void>;
 }
 
 export interface CrudFactoryConfig {
