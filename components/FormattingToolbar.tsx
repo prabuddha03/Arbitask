@@ -2,8 +2,11 @@
 
 import { RefObject } from "react";
 import { TOOLBAR_ITEMS } from "@/lib/constants";
+import styles from "./FormattingToolbar.module.css";
 
-const MONO = `'JetBrains Mono', monospace`;
+function cn(...parts: Array<string | false | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
 
 interface FormattingToolbarProps {
   textareaRef: RefObject<HTMLTextAreaElement | null>;
@@ -12,7 +15,7 @@ interface FormattingToolbarProps {
 }
 
 export function FormattingToolbar({ textareaRef, value, onChange }: FormattingToolbarProps) {
-  const handleInsert = (item: typeof TOOLBAR_ITEMS[number]) => {
+  const handleInsert = (item: (typeof TOOLBAR_ITEMS)[number]) => {
     const ta = textareaRef.current;
     if (!ta) return;
     const start = ta.selectionStart;
@@ -38,46 +41,18 @@ export function FormattingToolbar({ textareaRef, value, onChange }: FormattingTo
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: 2,
-        padding: "6px 8px",
-        background: "var(--surface2)",
-        borderRadius: "10px 10px 0 0",
-        border: "1px solid var(--border2)",
-        borderBottom: "none",
-        flexWrap: "wrap",
-      }}
-    >
+    <div className={styles.toolbar}>
       {TOOLBAR_ITEMS.map((item) => (
         <button
           key={item.id}
+          type="button"
           onClick={() => handleInsert(item)}
           title={item.title}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "var(--text2)",
-            cursor: "pointer",
-            padding: "4px 8px",
-            borderRadius: 6,
-            fontSize: 12,
-            fontWeight: 700,
-            fontFamily: item.id === "code" ? MONO : "inherit",
-            transition: "all .15s",
-            minWidth: 28,
-            textAlign: "center",
-            fontStyle: item.id === "italic" ? "italic" : "normal",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "var(--accent-soft)";
-            e.currentTarget.style.color = "var(--accent-text)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "var(--text2)";
-          }}
+          className={cn(
+            styles.toolBtn,
+            item.id === "code" && styles.toolBtnCode,
+            item.id === "italic" && styles.toolBtnItalic,
+          )}
         >
           {item.label}
         </button>

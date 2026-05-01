@@ -9,6 +9,7 @@ import { ProjectSettingsModal } from "@/components/modals/ProjectSettingsModal";
 import { TaskModal } from "@/components/modals/TaskModal";
 import { Stats } from "@/lib/constants";
 import { createTask, createProject, updateProject, removeMember } from "@/lib/actions";
+import styles from "./AppShell.module.css";
 
 type TaskUser = { id: string; name: string | null; image: string | null };
 type Task = {
@@ -98,7 +99,7 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
     ["dashboard", "notes", "shipped", "teams"].includes(currentView);
 
   return (
-    <div style={{ display: "flex", width: "100%", height: "100%" }}>
+    <div className={styles.layout}>
       <Sidebar
         projects={projects}
         activeProjectId={projectId}
@@ -115,34 +116,32 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
       />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
+      <div className={styles.main}>
         {/* Top header */}
-        <div style={{ padding: "13px 24px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--surface)", flexShrink: 0, boxShadow: "0 1px 0 var(--border)" }}>
-          <div style={{ minWidth: 0 }}>
-            <h1 style={{ fontSize: 15, fontWeight: 700, letterSpacing: -0.3, color: "var(--text)" }}>
+        <div className={styles.header}>
+          <div className={styles.headerTitleBlock}>
+            <h1 className={styles.title}>
               {isGlobal ? VIEW_LABELS[currentView] : activeProject?.name || "Select a project"}
             </h1>
             {activeProject && !isGlobal && (
-              <p style={{ fontSize: 11.5, color: "var(--text3)", marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <p className={styles.subtitle}>
                 {activeProject.description ? `${activeProject.description} · ` : ""}{VIEW_LABELS[currentView]}
               </p>
             )}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+          <div className={styles.actions}>
             {!isGlobal && activeProject && (
               <button
+                type="button"
                 onClick={() => setShowProjectSettings(true)}
                 title="Project settings"
-                style={{ background: "var(--surface2)", border: "1px solid var(--border2)", borderRadius: 7, padding: "6px 11px", fontSize: 14, cursor: "pointer", color: "var(--text2)", lineHeight: 1 }}
+                className={styles.settingsBtn}
               >
                 ···
               </button>
             )}
             {projects.length > 0 && (
-              <button
-                onClick={() => setShowAddTask(true)}
-                style={{ background: "linear-gradient(135deg, #F07020 0%, #E8610A 100%)", color: "#FFF", border: "none", borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", boxShadow: "0 2px 10px rgba(232,97,10,0.30)", letterSpacing: 0.1 }}
-              >
+              <button type="button" onClick={() => setShowAddTask(true)} className={styles.addTaskBtn}>
                 + Add Task
               </button>
             )}
@@ -150,9 +149,7 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
         </div>
 
         {/* Page content */}
-        <div style={{ flex: 1, overflow: "auto", padding: 24, minHeight: 0 }}>
-          {children}
-        </div>
+        <div className={styles.content}>{children}</div>
       </div>
 
       {showAddTask && (

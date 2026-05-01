@@ -2,6 +2,11 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import styles from "./project-layout.module.css";
+
+function cn(...parts: Array<string | false | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
 
 const TABS = [
   { id: "overview",  label: "Overview",  icon: "◎" },
@@ -22,40 +27,15 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: 0 }}>
-      {/* Tab bar */}
-      <div
-        style={{
-          display: "flex",
-          gap: 2,
-          borderBottom: "1px solid var(--border)",
-          paddingBottom: 0,
-          marginBottom: 18,
-          flexShrink: 0,
-        }}
-      >
+    <div className={styles.root}>
+      <div className={styles.tabBar}>
         {TABS.map((tab) => {
           const active = isActive(tab.id);
           return (
             <Link
               key={tab.id}
               href={`/projects/${projectId}/${tab.id}`}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "8px 14px",
-                fontSize: 12,
-                fontWeight: active ? 700 : 500,
-                color: active ? "var(--accent)" : "var(--text2)",
-                borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
-                marginBottom: -1,
-                textDecoration: "none",
-                borderRadius: "6px 6px 0 0",
-                background: active ? "var(--accent)10" : "transparent",
-                transition: "all .15s",
-                whiteSpace: "nowrap",
-              }}
+              className={cn(styles.tab, active && styles.tabActive)}
             >
               <span>{tab.icon}</span>
               <span>{tab.label}</span>
@@ -64,10 +44,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
         })}
       </div>
 
-      {/* Page content */}
-      <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
-        {children}
-      </div>
+      <div className={styles.content}>{children}</div>
     </div>
   );
 }

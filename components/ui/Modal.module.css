@@ -1,0 +1,74 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.backdropFullscreen {
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.panel {
+  background: var(--surface-modal);
+  border: 1px solid var(--border-modal);
+  border-radius: 14px;
+  padding: 26px;
+  width: 460px;
+  max-width: 94vw;
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 40px var(--shadow);
+}
+
+.panelWide {
+  width: 660px;
+}
+
+.panelFullscreen {
+  border-radius: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: none;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.closeBtn {
+  background: var(--surface3);
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.bodyGrow {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}

@@ -1,0 +1,40 @@
+.toolbar {
+  display: flex;
+  gap: 2px;
+  padding: 6px 8px;
+  background: var(--surface2);
+  border-radius: 10px 10px 0 0;
+  border: 1px solid var(--border2);
+  border-bottom: none;
+  flex-wrap: wrap;
+}
+
+.toolBtn {
+  background: transparent;
+  border: none;
+  color: var(--text2);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-chip);
+  font-size: 12px;
+  font-weight: 700;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  min-width: 28px;
+  text-align: center;
+  font-family: var(--font-sans);
+}
+
+.toolBtn:hover {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+.toolBtnCode {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+}
+
+.toolBtnItalic {
+  font-style: italic;
+}

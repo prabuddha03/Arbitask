@@ -97,7 +97,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
               Sign in with Google to accept this invite
             </p>
             <form action={acceptInvite}>
-              <Btn style={{ width: "100%" }}>
+              <Btn fullWidth>
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
                   <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
                   <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
@@ -110,7 +110,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
           </div>
         ) : (
           <form action={acceptInvite}>
-            <Btn style={{ width: "100%" }}>
+            <Btn fullWidth>
               Accept Invitation
             </Btn>
           </form>
