@@ -4,6 +4,7 @@
 
 import { memberRepository } from "./member.repository";
 import { Role } from "@/lib/constants";
+import { getEffectiveProjectMember, isAtLeastAdmin } from "@/src/modules/rbac/rbac.service";
 
 export const memberService = {
   async getMembersForProject(projectId: string) {
@@ -28,15 +29,8 @@ export const memberService = {
       return { success: true };
     }
 
-    // Otherwise, check admin permission
-    const requestingMember = await memberRepository.findMembership(
-      target.projectId,
-      requestingUserId
-    );
-    if (
-      !requestingMember ||
-      (requestingMember.role !== Role.OWNER && requestingMember.role !== Role.ADMIN)
-    ) {
+    const effective = await getEffectiveProjectMember(target.projectId, requestingUserId);
+    if (!effective || !isAtLeastAdmin(effective.role)) {
       return { error: "FORBIDDEN" as const };
     }
 

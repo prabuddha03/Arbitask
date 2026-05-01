@@ -33,6 +33,7 @@ type Project = {
   priority: string;
   startDate: Date | null;
   targetDate: Date | null;
+  teamId: string | null;
   createdAt: Date;
   ownerId: string;
   tasks: Task[];
@@ -48,6 +49,7 @@ interface AppShellProps {
 
 const VIEW_LABELS: Record<string, string> = {
   dashboard: "Dashboard",
+  teams:     "Teams & workspaces",
   overview:  "Overview",
   kanban:    "Kanban Board",
   list:      "List View",
@@ -70,6 +72,7 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
   const projectId = params?.projectId as string | undefined;
 
   function getView() {
+    if (pathname.startsWith("/teams")) return "teams";
     if (pathname.includes("/overview")) return "overview";
     if (pathname.includes("/kanban"))   return "kanban";
     if (pathname.includes("/list"))     return "list";
@@ -80,7 +83,8 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
   }
 
   function onViewChange(view: string) {
-    router.push(`/${view}`);
+    if (view === "teams") router.push("/teams");
+    else router.push(`/${view}`);
   }
 
   function onSelectProject(pid: string) {
@@ -89,7 +93,9 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
 
   const activeProject = projectId ? projects.find((p) => p.id === projectId) : null;
   const currentView = getView();
-  const isGlobal = !pathname.includes("/projects/") || ["dashboard", "notes", "shipped"].includes(currentView);
+  const isGlobal =
+    !pathname.includes("/projects/") ||
+    ["dashboard", "notes", "shipped", "teams"].includes(currentView);
 
   return (
     <div style={{ display: "flex", width: "100%", height: "100%" }}>
@@ -168,7 +174,18 @@ function Shell({ projects, stats, user, children }: AppShellProps) {
         <ProjectModal
           onClose={() => setShowNewProject(false)}
           onSave={async (proj) => {
-            const project = await createProject({ ...proj, colorId: proj.colorId });
+            if (!proj.teamId) return;
+            const project = await createProject({
+              teamId: proj.teamId,
+              name: proj.name,
+              description: proj.description,
+              colorId: proj.colorId,
+              status: proj.status,
+              priority: proj.priority,
+              lead: proj.lead,
+              startDate: proj.startDate,
+              targetDate: proj.targetDate,
+            });
             setShowNewProject(false);
             router.push(`/projects/${project.id}/kanban`);
           }}

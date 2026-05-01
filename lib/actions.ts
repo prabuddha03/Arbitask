@@ -5,14 +5,18 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { signOut, signIn } from "./auth";
 import { db } from "./db";
-import { Role } from "@/lib/constants";
 import { projectService } from "@/src/modules/projects/project.service";
 import { taskService } from "@/src/modules/tasks/task.service";
 import { noteService } from "@/src/modules/notes/note.service";
 import { memberService } from "@/src/modules/members/member.service";
 import { inviteService } from "@/src/modules/invites/invite.service";
 import { assigneeService } from "@/src/modules/assignees/assignee.service";
-import { isMember, requireProjectAdmin, requireProjectMember } from "./auth-helpers";
+import {
+  isMember,
+  requireProjectAdmin,
+  requireProjectContributor,
+  requireProjectOwner,
+} from "./auth-helpers";
 
 // ============================================
 // Auth Actions
@@ -37,6 +41,7 @@ export async function signInWithCredentials(formData: FormData) {
 // ============================================
 
 export async function createProject(data: {
+  teamId: string;
   name: string;
   description?: string;
   colorId: string;
@@ -51,6 +56,7 @@ export async function createProject(data: {
 
   const project = await projectService.createProject(
     {
+      teamId: data.teamId,
       name: data.name,
       description: data.description,
       colorId: data.colorId,
@@ -105,10 +111,8 @@ export async function deleteProject(projectId: string) {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const memberCheck = await db.projectMember.findUnique({
-    where: { projectId_userId: { projectId, userId: session.user.id } },
-  });
-  if (!memberCheck || memberCheck.role !== Role.OWNER) throw new Error("Forbidden");
+  const ownerCheck = await requireProjectOwner(projectId, session.user.id);
+  if (!isMember(ownerCheck)) throw new Error("Forbidden");
 
   await projectService.deleteProject(projectId);
   revalidatePath("/", "layout");
@@ -130,7 +134,7 @@ export async function createTask(data: {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const memberCheck = await requireProjectMember(data.projectId, session.user.id);
+  const memberCheck = await requireProjectContributor(data.projectId, session.user.id);
   if (!isMember(memberCheck)) throw new Error("Forbidden");
 
   const task = await taskService.createTask({
@@ -164,7 +168,7 @@ export async function updateTask(
   const task = await db.task.findUnique({ where: { id: taskId } });
   if (!task) throw new Error("Not found");
 
-  const memberCheck = await requireProjectMember(task.projectId, session.user.id);
+  const memberCheck = await requireProjectContributor(task.projectId, session.user.id);
   if (!isMember(memberCheck)) throw new Error("Forbidden");
 
   const updated = await taskService.updateTask(taskId, {
@@ -187,7 +191,7 @@ export async function deleteTask(taskId: string) {
   const task = await db.task.findUnique({ where: { id: taskId } });
   if (!task) throw new Error("Not found");
 
-  const memberCheck = await requireProjectMember(task.projectId, session.user.id);
+  const memberCheck = await requireProjectContributor(task.projectId, session.user.id);
   if (!isMember(memberCheck)) throw new Error("Forbidden");
 
   await taskService.deleteTask(taskId);
@@ -205,6 +209,11 @@ export async function createNote(data: {
 }) {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
+
+  if (data.projectId) {
+    const ok = await requireProjectContributor(data.projectId, session.user.id);
+    if (!isMember(ok)) throw new Error("Forbidden");
+  }
 
   const note = await noteService.createNote(
     { title: data.title, content: data.content ?? "", projectId: data.projectId },
@@ -304,7 +313,7 @@ export async function addAssignee(taskId: string, userId: string) {
   const task = await db.task.findUnique({ where: { id: taskId } });
   if (!task) throw new Error("Task not found");
 
-  const memberCheck = await requireProjectMember(task.projectId, session.user.id);
+  const memberCheck = await requireProjectContributor(task.projectId, session.user.id);
   if (!isMember(memberCheck)) throw new Error("Forbidden");
 
   const result = await assigneeService.addAssignee(taskId, userId, task.projectId);
@@ -322,7 +331,7 @@ export async function removeAssignee(taskId: string, userId: string) {
   const task = await db.task.findUnique({ where: { id: taskId } });
   if (!task) throw new Error("Task not found");
 
-  const memberCheck = await requireProjectMember(task.projectId, session.user.id);
+  const memberCheck = await requireProjectContributor(task.projectId, session.user.id);
   if (!isMember(memberCheck)) throw new Error("Forbidden");
 
   await assigneeService.removeAssignee(taskId, userId);

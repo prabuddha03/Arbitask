@@ -132,6 +132,75 @@ export function createGetOneHandler<T>(
   }, config);
 }
 
+/** Next.js App Router dynamic segment bag (params is a Promise in Next 15). */
+export type AppRouteParams<T extends Record<string, string>> = { params: Promise<T> };
+
+/**
+ * GET with path params (e.g. /api/teams/[teamId]) — same middleware stack as {@link createGetHandler}.
+ */
+export function createAppRouteGetHandler<TParams extends Record<string, string>, TData>(
+  handler: (req: NextRequest, context: RequestContext, params: TParams) => Promise<TData>,
+  config: HandlerConfig = {}
+) {
+  return async (req: NextRequest, segment: AppRouteParams<TParams>) => {
+    const params = await segment.params;
+    return withMiddleware(async (r, context) => {
+      const data = await handler(r, context, params);
+      return successResponse(data);
+    }, config)(req);
+  };
+}
+
+/**
+ * PATCH with path params and validated JSON body.
+ */
+export function createAppRoutePatchHandler<TParams extends Record<string, string>, TData>(
+  handler: (req: NextRequest, context: RequestContext, params: TParams, validated: unknown) => Promise<TData>,
+  config: HandlerConfig & { validateBody: z.Schema }
+) {
+  return async (req: NextRequest, segment: AppRouteParams<TParams>) => {
+    const params = await segment.params;
+    return withMiddleware(async (r, context) => {
+      const validated = (r as any).__validatedBody;
+      const data = await handler(r, context, params, validated);
+      return successResponse(data);
+    }, config)(req);
+  };
+}
+
+/**
+ * POST with path params (e.g. nested members under a team).
+ */
+export function createAppRoutePostHandler<TParams extends Record<string, string>, TData>(
+  handler: (req: NextRequest, context: RequestContext, params: TParams, validated: unknown) => Promise<TData>,
+  config: HandlerConfig & { validateBody: z.Schema }
+) {
+  return async (req: NextRequest, segment: AppRouteParams<TParams>) => {
+    const params = await segment.params;
+    return withMiddleware(async (r, context) => {
+      const validated = (r as any).__validatedBody;
+      const data = await handler(r, context, params, validated);
+      return createdResponse(data);
+    }, config)(req);
+  };
+}
+
+/**
+ * DELETE with path params.
+ */
+export function createAppRouteDeleteHandler<TParams extends Record<string, string>>(
+  handler: (req: NextRequest, context: RequestContext, params: TParams) => Promise<void>,
+  config: HandlerConfig = {}
+) {
+  return async (req: NextRequest, segment: AppRouteParams<TParams>) => {
+    const params = await segment.params;
+    return withMiddleware(async (r, context) => {
+      await handler(r, context, params);
+      return noContentResponse();
+    }, config)(req);
+  };
+}
+
 /**
  * Wrap a handler that returns a raw {@link NextResponse} (OpenAPI JSON, HTML, etc.)
  * with the standard middleware pipeline. Does not wrap the body in {@link successResponse}.

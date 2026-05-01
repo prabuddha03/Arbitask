@@ -2,11 +2,7 @@ import type { NextRequest } from "next/server";
 import { projectService } from "@/src/modules/projects/project.service";
 import { updateProjectSchema } from "@/src/modules/projects/project.schema";
 import { withMiddleware, successResponse, noContentResponse } from "@/lib/http";
-import { assertProjectAdmin } from "@/lib/auth-helpers";
-import { Role } from "@/lib/constants";
-import { db } from "@/lib/db";
-import { ApiErrors } from "@/lib/middlewares";
-import { validateRequestBody } from "@/lib/validation/validation";
+import { assertProjectAdmin, assertProjectOwner } from "@/lib/auth-helpers";
 
 type Params = { params: Promise<{ projectId: string }> };
 
@@ -77,10 +73,7 @@ export function DELETE(req: NextRequest, { params }: Params) {
   return withMiddleware(
     async (_r, context) => {
       const { projectId } = await params;
-      const member = await db.projectMember.findUnique({
-        where: { projectId_userId: { projectId, userId: String(context.user!.id) } },
-      });
-      if (!member || member.role !== Role.OWNER) throw ApiErrors.Forbidden("Only the project owner can delete");
+      await assertProjectOwner(projectId, String(context.user!.id));
       await projectService.deleteProject(projectId);
       return noContentResponse();
     },

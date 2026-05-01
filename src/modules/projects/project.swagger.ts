@@ -123,8 +123,12 @@
  *     CreateProjectRequest:
  *       type: object
  *       required:
+ *         - teamId
  *         - name
  *       properties:
+ *         teamId:
+ *           type: string
+ *           description: Team that owns the project (Member+ required on team)
  *         name:
  *           type: string
  *           minLength: 1

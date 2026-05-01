@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { taskService } from "@/src/modules/tasks/task.service";
 import { updateTaskSchema } from "@/src/modules/tasks/task.schema";
 import { withMiddleware, successResponse, noContentResponse } from "@/lib/http";
-import { assertProjectMember } from "@/lib/auth-helpers";
+import { assertProjectContributor } from "@/lib/auth-helpers";
 import { ApiErrors } from "@/lib/middlewares";
 import { db } from "@/lib/db";
 
@@ -11,7 +11,7 @@ type Params = { params: Promise<{ taskId: string }> };
 async function getTaskAndVerifyMember(taskId: string, userId: string) {
   const task = await db.task.findUnique({ where: { id: taskId } });
   if (!task) throw ApiErrors.NotFound("Task not found");
-  await assertProjectMember(task.projectId, userId);
+  await assertProjectContributor(task.projectId, userId);
   
   return task;
 }

@@ -1,0 +1,123 @@
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: var(--space-1);
+}
+
+.title {
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-heading);
+  letter-spacing: var(--tracking-headline);
+  color: var(--text);
+  line-height: var(--leading-h3);
+  margin: 0 0 var(--space-3);
+}
+
+.lead {
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: var(--space-3);
+}
+
+.card {
+  background: var(--surface-modal);
+  border: 1px solid var(--border-modal);
+  border-radius: var(--radius-stadium);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-nav);
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: var(--font-weight-ui);
+  color: var(--text);
+  margin: 0 0 var(--space-2);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  align-items: flex-end;
+  margin-bottom: var(--space-2);
+}
+
+.input {
+  flex: 1;
+  min-width: 160px;
+  padding: 10px 14px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: var(--font-weight-body);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: var(--radius-button);
+  border: 1.5px solid var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-canvas-cream);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: var(--font-weight-ui);
+  letter-spacing: -0.02em;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.listItem {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text2);
+}
+
+.listItem:last-child {
+  border-bottom: none;
+}
+
+.meta {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+
+.error {
+  color: var(--color-signal-orange);
+  font-size: 13px;
+  margin-top: var(--space-1);
+}
+
+.strong {
+  color: var(--text);
+  font-weight: var(--font-weight-ui);
+}

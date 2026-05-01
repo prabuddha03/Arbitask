@@ -19,13 +19,16 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
 
-  accounts      Account[]
-  sessions      Session[]
-  ownedProjects Project[]       @relation("ProjectOwner")
-  memberships   ProjectMember[]
-  assignedTasks TaskAssignee[]
-  notes         Note[]
-  invitesSent   Invite[]
+  accounts           Account[]
+  sessions           Session[]
+  ownedProjects      Project[]         @relation("ProjectOwner")
+  memberships        ProjectMember[]
+  assignedTasks      TaskAssignee[]
+  notes              Note[]
+  invitesSent        Invite[]
+  ownedWorkspaces    Workspace[]       @relation("WorkspaceOwner")
+  workspaceMembers   WorkspaceMember[]
+  teamMembers        TeamMember[]
 }
 
 model Account {
@@ -66,6 +69,60 @@ model VerificationToken {
 
 // ─── App models ──────────────────────────────────────────────────────────────
 
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  ownerId   String
+
+  owner   User              @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members WorkspaceMember[]
+  teams   Team[]
+}
+
+// Role: "OWNER" | "ADMIN" | "MEMBER" | "VIEWER"
+model WorkspaceMember {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        String   @default("MEMBER")
+  joinedAt    DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+}
+
+model Team {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  parentTeamId String?
+  name         String
+  description  String?
+  createdAt    DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  parent    Team?     @relation("TeamHierarchy", fields: [parentTeamId], references: [id], onDelete: SetNull)
+  children  Team[]    @relation("TeamHierarchy")
+  projects  Project[]
+  members   TeamMember[]
+}
+
+// Role: "OWNER" | "ADMIN" | "MEMBER" | "VIEWER"
+model TeamMember {
+  id       String   @id @default(cuid())
+  teamId   String
+  userId   String
+  role     String   @default("MEMBER")
+  joinedAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+}
+
 model Project {
   id          String    @id @default(cuid())
   name        String
@@ -78,8 +135,10 @@ model Project {
   targetDate  DateTime?
   createdAt   DateTime  @default(now())
   ownerId     String
+  teamId      String?
 
   owner   User            @relation("ProjectOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  team    Team?           @relation(fields: [teamId], references: [id], onDelete: SetNull)
   tasks   Task[]
   members ProjectMember[]
   invites Invite[]

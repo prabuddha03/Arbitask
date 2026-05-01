@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { taskService } from "@/src/modules/tasks/task.service";
 import { createTaskSchema } from "@/src/modules/tasks/task.schema";
 import { withMiddleware, createdResponse } from "@/lib/http";
-import { assertProjectMember } from "@/lib/auth-helpers";
+import { assertProjectContributor } from "@/lib/auth-helpers";
 import { ApiErrors } from "@/lib/middlewares";
 
 /**
@@ -33,7 +33,7 @@ export function POST(req: NextRequest) {
   return withMiddleware(
     async (_r, context) => {
       const validated = createTaskSchema.parse((_r as any).__validatedBody);
-      await assertProjectMember(validated.projectId, String(context.user!.id));
+      await assertProjectContributor(validated.projectId, String(context.user!.id));
       
       const task = await taskService.createTask(validated);
       return createdResponse(task);
