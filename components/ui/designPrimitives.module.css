@@ -1,0 +1,39 @@
+/**
+ * Reusable typography / surface hooks for new UI (use inside ThemeProvider for semantic vars).
+ */
+
+.headingSection {
+  font-size: var(--text-h2);
+  line-height: var(--leading-h2);
+  font-weight: var(--font-weight-heading);
+  letter-spacing: var(--tracking-headline);
+  color: var(--text);
+}
+
+.body {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  font-weight: var(--font-weight-body);
+  color: var(--text);
+}
+
+.muted {
+  color: var(--text2);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-body);
+}
+
+.eyebrow {
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--text2);
+}
+
+.surfaceRaised {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-stadium);
+  box-shadow: var(--shadow-nav);
+}

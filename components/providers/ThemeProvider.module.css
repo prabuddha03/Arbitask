@@ -1,0 +1,83 @@
+/**
+ * Theme shell — semantic tokens from app/globals.css (`[data-theme]` on .root).
+ */
+
+.root {
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.inner {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.orb {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+.root[data-theme="dark"] .orbDark1 {
+  top: -160px;
+  right: -80px;
+  width: 560px;
+  height: 560px;
+  background: radial-gradient(circle, rgba(232, 97, 10, 0.13) 0%, transparent 65%);
+}
+
+.root[data-theme="dark"] .orbDark2 {
+  bottom: -200px;
+  left: 80px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(180, 60, 5, 0.07) 0%, transparent 65%);
+}
+
+.root[data-theme="dark"] .orbDark3 {
+  top: 35%;
+  right: 20%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(240, 112, 32, 0.04) 0%, transparent 70%);
+}
+
+.root[data-theme="light"] .orbLight1 {
+  top: -120px;
+  right: -60px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(196, 72, 0, 0.07) 0%, transparent 65%);
+}
+
+.root[data-theme="light"] .orbLight2 {
+  bottom: -180px;
+  left: 60px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(196, 72, 0, 0.04) 0%, transparent 65%);
+}
+
+.root[data-theme="eye"] .orbEye1 {
+  top: -100px;
+  right: -40px;
+  width: 440px;
+  height: 440px;
+  background: radial-gradient(circle, rgba(140, 54, 0, 0.09) 0%, transparent 65%);
+}
+
+.root[data-theme="eye"] .orbEye2 {
+  bottom: -160px;
+  left: 40px;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, rgba(140, 54, 0, 0.05) 0%, transparent 65%);
+}

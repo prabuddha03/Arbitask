@@ -1,6 +1,6 @@
 /**
- * Shell styling around Swagger UI — DESIGN.md tokens (Canvas Cream, Ink Black, Signal Orange).
- * Uses :global for classes owned by swagger-ui-dist.
+ * Standalone Swagger UI shell (does not load app/globals.css).
+ * Values mirror DESIGN.md tokens: Canvas Cream, Ink Black, Signal Orange.
  */
 
 .page {
@@ -8,6 +8,7 @@
   min-height: 100vh;
   background: #f3f0ee;
   font-family: "Sofia Sans", system-ui, sans-serif;
+  font-weight: 450;
 }
 
 .page :global(.swagger-ui .topbar) {
