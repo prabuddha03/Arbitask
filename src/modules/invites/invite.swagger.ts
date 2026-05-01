@@ -45,6 +45,12 @@
  *         $ref: '#/components/responses/Unauthorized'
  *       403:
  *         $ref: '#/components/responses/Forbidden'
+ *       429:
+ *         description: Rate limit exceeded for invite generation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *
  * /api/invites/{token}:
  *   get:
@@ -72,6 +78,12 @@
  *         description: Invalid invite token
  *       410:
  *         description: Invite expired or already accepted
+ *       429:
+ *         description: Rate limit exceeded for invite preview lookups
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *   post:
  *     tags:
  *       - Invites
@@ -103,6 +115,12 @@
  *         description: Invalid invite token
  *       410:
  *         description: Invite expired or already accepted
+ *       429:
+ *         description: Rate limit exceeded for invite acceptance
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 
 /**

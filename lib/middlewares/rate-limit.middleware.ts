@@ -14,6 +14,8 @@ export interface RateLimitConfig {
   window: string; // Time window: '1s', '1m', '1h', '1d'
   message?: string; // Custom error message
   keyPrefix?: string; // Custom key prefix
+  /** When set, used instead of the request URL pathname (avoids unbounded keys for dynamic routes). */
+  pathKey?: string;
 }
 
 interface WindowEntry {
@@ -47,7 +49,7 @@ function parseWindowMs(window: string): number {
 function getRateLimitKey(req: Request, user: AuthUser | null, config: RateLimitConfig): string {
   const prefix = config.keyPrefix ?? "ratelimit";
   const identifier = user ? `user:${user.id}` : `ip:${getClientIp(req)}`;
-  const endpoint = new URL(req.url).pathname;
+  const endpoint = config.pathKey ?? new URL(req.url).pathname;
   return `${prefix}:${endpoint}:${identifier}`;
 }
 
@@ -101,14 +103,41 @@ export function withRateLimit(config: RateLimitConfig) {
  * Pre-configured rate limiters for Arbitask endpoints
  */
 export const RateLimiters = {
-  // Auth endpoints — tight
+  // Auth endpoints — tight (POST: sign-in, callbacks, sign-out)
   auth: { max: 5, window: "15m" } satisfies RateLimitConfig,
+
+  /** Auth.js GET traffic (session, CSRF, providers) — per-IP, fixed bucket */
+  authRead: {
+    max: 120,
+    window: "1m",
+    keyPrefix: "auth-read",
+    pathKey: "/api/auth",
+  } satisfies RateLimitConfig,
 
   // Mutation endpoints
   createProject: { max: 20, window: "1h" } satisfies RateLimitConfig,
   createTask: { max: 60, window: "1h" } satisfies RateLimitConfig,
   createNote: { max: 30, window: "1h" } satisfies RateLimitConfig,
   generateInvite: { max: 10, window: "1h" } satisfies RateLimitConfig,
+
+  /**
+   * Public invite preview (GET /api/invites/:token) — IP keyed with a stable path
+   * so attackers cannot mint unbounded store keys by varying the token.
+   */
+  inviteTokenPreview: {
+    max: 40,
+    window: "15m",
+    keyPrefix: "invite-preview",
+    pathKey: "/api/invites/[token]",
+  } satisfies RateLimitConfig,
+
+  /** Accept invite (POST) — authenticated; keyed per user */
+  inviteAccept: {
+    max: 30,
+    window: "1h",
+    keyPrefix: "invite-accept",
+    pathKey: "/api/invites/[token]",
+  } satisfies RateLimitConfig,
 
   // Read endpoints — generous
   read: { max: 200, window: "1m" } satisfies RateLimitConfig,
