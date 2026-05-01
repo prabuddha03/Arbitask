@@ -1,0 +1,182 @@
+/**
+ * Login surface — uses :root static tokens from app/globals.css (Sofia Sans, DESIGN palette).
+ * Dark hero treatment; primary actions use ink pill + accent gradient per product login flow.
+ */
+
+.shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-body);
+  background: radial-gradient(ellipse 100% 60% at 50% -10%, #2a1200 0%, #0d0c0a 60%);
+}
+
+.orb {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(ellipse, rgba(232, 97, 10, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 380px;
+  padding: 44px 40px 40px;
+  text-align: center;
+  background: rgba(23, 21, 18, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 235, 210, 0.1);
+  border-radius: var(--radius-stadium);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 235, 210, 0.04) inset;
+}
+
+.logoMark {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--color-white);
+  background: linear-gradient(135deg, #f07020 0%, #e8610a 60%, #c44800 100%);
+  box-shadow: 0 8px 24px rgba(232, 97, 10, 0.4);
+}
+
+.title {
+  margin-bottom: 6px;
+  font-size: 22px;
+  font-weight: var(--font-weight-heading);
+  letter-spacing: var(--tracking-headline);
+  color: #f0ebe3;
+}
+
+.tagline {
+  margin-bottom: 34px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6b5a4a;
+}
+
+.btnGoogle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 20px;
+  border: none;
+  border-radius: var(--radius-button);
+  font-size: 14px;
+  font-weight: var(--font-weight-ui);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  color: var(--color-ink);
+  background: var(--color-lifted-cream);
+}
+
+.btnGoogle:hover {
+  filter: brightness(1.03);
+}
+
+.dividerRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 235, 210, 0.08);
+}
+
+.dividerLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #4a4440;
+}
+
+.formDemo {
+  text-align: left;
+}
+
+.field {
+  margin-bottom: 8px;
+}
+
+.fieldLast {
+  margin-bottom: 12px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  color: #f0ebe3;
+  background: rgba(255, 235, 210, 0.05);
+  border: 1px solid rgba(255, 235, 210, 0.1);
+  border-radius: var(--radius-button);
+  outline: none;
+}
+
+.input:focus {
+  border-color: rgba(232, 97, 10, 0.45);
+  box-shadow: 0 0 0 2px rgba(232, 97, 10, 0.15);
+}
+
+.error {
+  margin-bottom: 10px;
+  font-size: 12px;
+  text-align: center;
+  color: #f87171;
+}
+
+.btnDemo {
+  width: 100%;
+  padding: 11px 20px;
+  border: none;
+  border-radius: var(--radius-button);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  color: var(--color-white);
+  background: linear-gradient(135deg, #f07020 0%, #e8610a 100%);
+  box-shadow: 0 4px 14px rgba(232, 97, 10, 0.35);
+}
+
+.btnDemo:hover {
+  filter: brightness(1.05);
+}
+
+.footerHint {
+  margin-top: 20px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #3a3430;
+}
+
+.code {
+  color: #5a5048;
+  font-family: ui-monospace, monospace;
+}
