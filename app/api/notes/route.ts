@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { noteService } from "@/src/modules/notes/note.service";
 import { createNoteSchema } from "@/src/modules/notes/note.schema";
 import { withMiddleware, successResponse, createdResponse } from "@/lib/http";
+import { assertProjectContributor } from "@/lib/auth-helpers";
 
 /**
  * @openapi
@@ -68,6 +69,9 @@ export function POST(req: NextRequest) {
   return withMiddleware(
     async (_r, context) => {
       const validated = createNoteSchema.parse((_r as any).__validatedBody);
+      if (validated.projectId) {
+        await assertProjectContributor(validated.projectId, String(context.user!.id));
+      }
       const note = await noteService.createNote(validated, String(context.user!.id));
       return createdResponse(note);
     },

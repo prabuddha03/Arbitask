@@ -50,6 +50,7 @@ export const projectRepository = {
    */
   async create(
     data: {
+      teamId: string;
       name: string;
       description?: string | null;
       colorId?: string;
@@ -64,6 +65,7 @@ export const projectRepository = {
   ) {
     return db.project.create({
       data: {
+        teamId: data.teamId,
         name: data.name,
         description: data.description || null,
         colorId: data.colorId || "rose",

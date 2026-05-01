@@ -8,6 +8,7 @@ import { z } from "zod";
 // Create Project Schema
 // ============================================
 export const createProjectSchema = z.object({
+  teamId: z.string().min(1, "Team is required"),
   name: z.string().min(1, "Name is required").max(100, "Name must be 100 characters or less"),
   description: z.string().max(1000).optional().nullable(),
   colorId: z.string().default("rose"),
@@ -23,7 +24,7 @@ export const createProjectSchema = z.object({
 // ============================================
 // Update Project Schema
 // ============================================
-export const updateProjectSchema = createProjectSchema.partial();
+export const updateProjectSchema = createProjectSchema.partial().omit({ teamId: true });
 
 // ============================================
 // Query Params Schema

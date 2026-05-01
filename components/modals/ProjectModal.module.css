@@ -1,0 +1,54 @@
+.teamField {
+  margin-bottom: var(--space-2);
+}
+
+.teamLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: var(--font-weight-ui);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: var(--space-1);
+}
+
+.teamSelect {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: var(--font-weight-body);
+  cursor: pointer;
+}
+
+.teamSelect:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.teamHint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text3);
+  line-height: 1.45;
+}
+
+.teamError {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--color-signal-orange);
+}
+
+.teamLink {
+  color: var(--color-link-blue);
+  text-decoration: none;
+}
+
+.teamLink:hover {
+  text-decoration: underline;
+}

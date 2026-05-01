@@ -49,6 +49,7 @@ export function Sidebar({
 }: SidebarProps) {
   const views = [
     { id: "dashboard", icon: "⊞", label: "Dashboard" },
+    { id: "teams",     icon: "⎔", label: "Teams" },
     { id: "kanban",    icon: "▦", label: "Kanban" },
     { id: "list",      icon: "≡", label: "List" },
     { id: "timeline",  icon: "⊟", label: "Timeline" },
@@ -123,7 +124,7 @@ export function Sidebar({
         {/* Projects */}
         <div style={{ flex: 1, padding: "6px 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 2, overflowY: "auto" }}>
           {projects.map((p) => {
-            const isA = activeProjectId === p.id && !["notes", "shipped", "dashboard"].includes(activeView);
+            const isA = activeProjectId === p.id && !["notes", "shipped", "dashboard", "teams"].includes(activeView);
             return (
               <button key={p.id} onClick={() => onSelectProject(p.id)} title={p.name}
                 style={{ width: 32, height: 32, borderRadius: 7, border: isA ? "1.5px solid var(--accent)" : "1.5px solid transparent", background: isA ? "var(--accent-soft)" : "transparent", cursor: "pointer", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -210,7 +211,7 @@ export function Sidebar({
           <button onClick={onNewProject} style={{ background: "none", border: "none", color: "var(--text3)", cursor: "pointer", fontSize: 16, lineHeight: 1, padding: "0 2px" }} title="New project">+</button>
         </div>
         {projects.map((p) => {
-          const isA = activeProjectId === p.id && !["notes", "shipped", "dashboard"].includes(activeView);
+          const isA = activeProjectId === p.id && !["notes", "shipped", "dashboard", "teams"].includes(activeView);
           return (
             <button key={p.id} onClick={() => onSelectProject(p.id)} style={navBtn(isA)}>
               <span style={{ fontSize: 14, flexShrink: 0 }}>{projectIcon(p.colorId)}</span>

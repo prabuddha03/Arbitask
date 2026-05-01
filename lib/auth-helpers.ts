@@ -1,56 +1,79 @@
 import { auth } from "./auth";
-import { db } from "./db";
 import { Role } from "@/lib/constants";
 import { NextResponse } from "next/server";
 import { ApiErrors } from "@/lib/middlewares";
+import {
+  getEffectiveProjectMember,
+  isAtLeastAdmin,
+  isAtLeastMember,
+  isOwner,
+  type EffectiveProjectMember,
+} from "@/src/modules/rbac/rbac.service";
 
 export async function getSession() {
   return auth();
 }
 
-/** Returns the ProjectMember row if user is a member, else returns a 401/403 Response */
+export function isMember(v: unknown): v is EffectiveProjectMember {
+  return typeof v === "object" && v !== null && "role" in v;
+}
+
 export async function requireProjectMember(projectId: string, userId: string) {
-  const member = await db.projectMember.findUnique({
-    where: { projectId_userId: { projectId, userId } },
-  });
+  const member = await getEffectiveProjectMember(projectId, userId);
   if (!member) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   return member;
 }
 
-/** Returns the ProjectMember row if user is OWNER or ADMIN, else 403 */
 export async function requireProjectAdmin(projectId: string, userId: string) {
-  const member = await db.projectMember.findUnique({
-    where: { projectId_userId: { projectId, userId } },
-  });
-  if (!member || (member.role !== Role.OWNER && member.role !== Role.ADMIN)) {
+  const member = await getEffectiveProjectMember(projectId, userId);
+  if (!member || !isAtLeastAdmin(member.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   return member;
 }
 
-/** Type guard — narrows NextResponse vs actual member */
-export function isMember(v: unknown): v is { id: string; role: string; projectId: string; userId: string; joinedAt: Date } {
-  return typeof v === "object" && v !== null && "role" in v;
+export async function requireProjectContributor(projectId: string, userId: string) {
+  const member = await getEffectiveProjectMember(projectId, userId);
+  if (!member || !isAtLeastMember(member.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  return member;
 }
 
-// ─── Throwing variants (used by refactored thin API routes) ──────────────────
+export async function requireProjectOwner(projectId: string, userId: string) {
+  const member = await getEffectiveProjectMember(projectId, userId);
+  if (!member || !isOwner(member.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  return member;
+}
 
-/** Like requireProjectMember but throws ApiError instead of returning a Response */
 export async function assertProjectMember(projectId: string, userId: string) {
-  const member = await db.projectMember.findUnique({
-    where: { projectId_userId: { projectId, userId } },
-  });
+  const member = await getEffectiveProjectMember(projectId, userId);
   if (!member) throw ApiErrors.Forbidden("You are not a project member");
   return member;
 }
 
-/** Like requireProjectAdmin but throws ApiError instead of returning a Response */
 export async function assertProjectAdmin(projectId: string, userId: string) {
-  const member = await db.projectMember.findUnique({
-    where: { projectId_userId: { projectId, userId } },
-  });
-  if (!member || (member.role !== Role.OWNER && member.role !== Role.ADMIN)) {
+  const member = await getEffectiveProjectMember(projectId, userId);
+  if (!member || !isAtLeastAdmin(member.role)) {
     throw ApiErrors.Forbidden("Admin or Owner role required");
+  }
+  return member;
+}
+
+export async function assertProjectContributor(projectId: string, userId: string) {
+  const member = await getEffectiveProjectMember(projectId, userId);
+  if (!member || !isAtLeastMember(member.role)) {
+    throw ApiErrors.Forbidden("Member role or higher required for this action");
+  }
+  return member;
+}
+
+export async function assertProjectOwner(projectId: string, userId: string) {
+  const member = await getEffectiveProjectMember(projectId, userId);
+  if (!member || !isOwner(member.role)) {
+    throw ApiErrors.Forbidden("Project owner role required");
   }
   return member;
 }

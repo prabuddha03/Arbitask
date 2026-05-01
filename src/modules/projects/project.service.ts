@@ -3,7 +3,11 @@
  */
 
 import { projectRepository } from "./project.repository";
+import { teamRepository } from "@/src/modules/teams/team.repository";
+import { teamService } from "@/src/modules/teams/team.service";
 import { Role } from "@/lib/constants";
+import { ApiErrors } from "@/lib/middlewares";
+import { isAtLeastMember } from "@/src/modules/rbac/rbac.service";
 import type { CreateProjectInput, UpdateProjectInput } from "./project.schema";
 
 export const projectService = {
@@ -11,6 +15,7 @@ export const projectService = {
    * Get all projects the user has access to
    */
   async getProjectsForUser(userId: string) {
+    await teamService.ensureBackfill();
     return projectRepository.findByMembership(userId);
   },
 
@@ -22,9 +27,14 @@ export const projectService = {
   },
 
   /**
-   * Create a new project and auto-add the creator as OWNER
+   * Create a project under a team; creator must be MEMBER+ on the team.
    */
   async createProject(data: CreateProjectInput, ownerId: string) {
+    await teamService.ensureBackfill();
+    const tm = await teamRepository.findMembership(data.teamId, ownerId);
+    if (!tm || !isAtLeastMember(tm.role)) {
+      throw ApiErrors.Forbidden("You need Member access or higher on the team to create a project");
+    }
     return projectRepository.create(data, ownerId, Role.OWNER);
   },
 

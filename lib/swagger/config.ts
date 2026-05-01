@@ -349,6 +349,14 @@ export const swaggerOptions: OAS3Options = {
         description: "Project member management and role assignment",
       },
       {
+        name: "Workspaces",
+        description: "Workspace → Teams → Projects hierarchy (workspace membership)",
+      },
+      {
+        name: "Teams",
+        description: "Team CRUD, nested teams, and team-level RBAC",
+      },
+      {
         name: "Invites",
         description: "Invite link generation and acceptance",
       },
