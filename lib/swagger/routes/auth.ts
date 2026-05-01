@@ -18,6 +18,12 @@
  *         description: Auth.js response (varies by sub-route)
  *       302:
  *         description: Redirect (OAuth flow)
+ *       429:
+ *         description: Rate limit exceeded (GET traffic is throttled per IP)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *   post:
  *     tags:
  *       - Auth
@@ -32,5 +38,11 @@
  *         description: Auth.js response (varies by sub-route)
  *       302:
  *         description: Redirect (after sign-in/sign-out)
+ *       429:
+ *         description: Rate limit exceeded (sign-in attempts and other POST auth traffic)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export {};

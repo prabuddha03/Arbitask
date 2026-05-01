@@ -173,12 +173,12 @@ export function createAppRoutePatchHandler<TParams extends Record<string, string
  */
 export function createAppRoutePostHandler<TParams extends Record<string, string>, TData>(
   handler: (req: NextRequest, context: RequestContext, params: TParams, validated: unknown) => Promise<TData>,
-  config: HandlerConfig & { validateBody: z.Schema }
+  config: HandlerConfig
 ) {
   return async (req: NextRequest, segment: AppRouteParams<TParams>) => {
     const params = await segment.params;
     return withMiddleware(async (r, context) => {
-      const validated = (r as any).__validatedBody;
+      const validated = config.validateBody ? (r as any).__validatedBody : undefined;
       const data = await handler(r, context, params, validated);
       return createdResponse(data);
     }, config)(req);
