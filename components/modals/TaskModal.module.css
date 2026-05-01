@@ -1,0 +1,1 @@
+.stack{display:flex;flex-direction:column;gap:12px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px}.justifyCenter{justify-content:center}

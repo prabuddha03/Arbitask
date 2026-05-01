@@ -1,0 +1,24 @@
+.badge {
+  --badge-color: var(--accent);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: var(--font-weight-ui);
+  letter-spacing: 0;
+  background: color-mix(in srgb, var(--badge-color) 12%, transparent);
+  color: var(--badge-color);
+  border: 1px solid color-mix(in srgb, var(--badge-color) 22%, transparent);
+}
+
+.size_sm {
+  font-size: 10px;
+}
+
+.size_xs {
+  font-size: 9px;
+  padding: 1px 6px;
+}

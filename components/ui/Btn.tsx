@@ -1,47 +1,45 @@
 "use client";
 
-import { CSSProperties, ReactNode } from "react";
+import { ReactNode } from "react";
+import styles from "./Btn.module.css";
 
 interface BtnProps {
   children: ReactNode;
   onClick?: () => void;
   variant?: "primary" | "secondary" | "ghost" | "danger";
   size?: "sm" | "md" | "lg";
-  style?: CSSProperties;
+  fullWidth?: boolean;
+  className?: string;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
 }
 
-export function Btn({ children, onClick, variant = "primary", size = "md", style = {}, disabled, type = "button" }: BtnProps) {
-  const base: CSSProperties = {
-    fontWeight: 500,
-    border: "none",
-    cursor: disabled ? "not-allowed" : "pointer",
-    borderRadius: 7,
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    transition: "all .2s",
-    opacity: disabled ? 0.4 : 1,
-    fontSize: size === "sm" ? 12 : size === "lg" ? 15 : 13,
-    padding: size === "sm" ? "6px 12px" : size === "lg" ? "14px 28px" : "10px 18px",
-  };
+function cn(...parts: Array<string | false | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
 
-  const variants: Record<string, CSSProperties> = {
-    primary: { background: "var(--accent)", color: "#FFF", boxShadow: disabled ? "none" : "0 2px 8px var(--accent-glow)" },
-    secondary: { background: "var(--surface3)", color: "var(--text)", border: "1px solid var(--border2)" },
-    ghost: { background: "transparent", color: "var(--text2)" },
-    danger: { background: "#EF444420", color: "#EF4444", border: "1px solid #EF444444" },
-  };
-
+export function Btn({
+  children,
+  onClick,
+  variant = "primary",
+  size = "md",
+  fullWidth,
+  className,
+  disabled,
+  type = "button",
+}: BtnProps) {
   return (
     <button
       type={type}
-      style={{ ...base, ...variants[variant], ...style }}
+      className={cn(
+        styles.btn,
+        styles[variant],
+        styles[`size_${size}`],
+        fullWidth && styles.fullWidth,
+        className,
+      )}
+      disabled={disabled}
       onClick={disabled ? undefined : onClick}
-      onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.transform = "translateY(-1px)"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; }}
     >
       {children}
     </button>

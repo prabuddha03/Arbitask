@@ -1,11 +1,22 @@
 import { ReactNode } from "react";
+import styles from "./Empty.module.css";
 
-export function Empty({ icon, title, sub, action }: { icon: string; title: string; sub: string; action?: ReactNode }) {
+export function Empty({
+  icon,
+  title,
+  sub,
+  action,
+}: {
+  icon: string;
+  title: string;
+  sub: string;
+  action?: ReactNode;
+}) {
   return (
-    <div style={{ textAlign: "center", padding: "60px 20px" }}>
-      <div style={{ fontSize: 44, marginBottom: 14 }}>{icon}</div>
-      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 6, color: "var(--text)" }}>{title}</h3>
-      <p style={{ fontSize: 13, color: "var(--text3)", marginBottom: 18 }}>{sub}</p>
+    <div className={styles.wrap}>
+      <div className={styles.icon}>{icon}</div>
+      <h3 className={styles.title}>{title}</h3>
+      <p className={styles.sub}>{sub}</p>
       {action}
     </div>
   );

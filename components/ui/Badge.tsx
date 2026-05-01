@@ -1,25 +1,20 @@
-import { CSSProperties, ReactNode } from "react";
+import { ReactNode } from "react";
+import styles from "./Badge.module.css";
 
-export function Badge({ children, color, style = {} }: { children: ReactNode; color?: string; style?: CSSProperties }) {
-  const c = color || "var(--accent)";
-  return (
-    <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 4,
-        padding: "3px 9px",
-        borderRadius: 20,
-        fontSize: 11,
-        fontWeight: 500,
-        letterSpacing: 0,
-        background: c + "18",
-        color: c,
-        border: `1px solid ${c}28`,
-        ...style,
-      }}
-    >
-      {children}
-    </span>
-  );
+function cn(...parts: Array<string | false | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
+
+export function Badge({
+  children,
+  size = "sm",
+  className,
+}: {
+  children: ReactNode;
+  /** Compact chip sizing for dense layouts */
+  size?: "xs" | "sm" | "md";
+  className?: string;
+}) {
+  const sizeClass = size === "xs" ? styles.size_xs : size === "md" ? undefined : styles.size_sm;
+  return <span className={cn(styles.badge, sizeClass, className)}>{children}</span>;
 }
