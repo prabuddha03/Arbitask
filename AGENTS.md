@@ -30,7 +30,7 @@ The `main` branch contains a working MVP with:
 ## Stack
 
 - Next.js 15, App Router, Server Actions, Server Components preferred, TypeScript strict mode
-- PostgreSQL via Prisma ORM (SQLite for local dev)
+- PostgreSQL via Prisma ORM (all environments)
 - Cloudflare R2 for file storage (attachments, documents, screen recordings)
 - DigitalOcean App Platform for deployment
 - Sentry for error tracking and performance monitoring

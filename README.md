@@ -44,7 +44,7 @@ A gamified project & idea management app — turn raw ideas into shipped work. K
 | Framework | [Next.js 15](https://nextjs.org/) — App Router, RSC, Server Actions |
 | Language | TypeScript 5 |
 | Auth | [Auth.js v5](https://authjs.dev/) — Google OAuth + Credentials provider |
-| Database | [Prisma 5](https://www.prisma.io/) ORM — SQLite (dev) / PostgreSQL (prod) |
+| Database | [Prisma 5](https://www.prisma.io/) ORM — [PostgreSQL](https://www.postgresql.org/) (all environments) |
 | Styling | CSS-in-JS (inline styles) + CSS custom properties — zero external CSS library |
 | Fonts | [Outfit](https://fonts.google.com/specimen/Outfit) (geometric sans-serif, Google Fonts) |
 
@@ -124,7 +124,8 @@ A gamified project & idea management app — turn raw ideas into shipped work. K
 │   ├── gamification.ts · helpers.ts · markdown.ts · theme.ts · fonts.ts
 │
 ├── prisma/
-│   └── schema.prisma
+│   ├── schema.prisma
+│   └── migrations/                         # versioned SQL migrations (migrate dev / deploy)
 ├── middleware.ts                           # Protect all routes except /login, /invite/*
 ├── .env.local.example
 ├── next.config.ts
@@ -139,6 +140,15 @@ A gamified project & idea management app — turn raw ideas into shipped work. K
 
 - [Node.js](https://nodejs.org/) v18+
 - npm
+- **PostgreSQL 14+** — local install, Docker, or a managed dev instance (Neon, Supabase, DigitalOcean, etc.)
+
+**Quick local database with Docker:**
+
+```bash
+docker run --name arbitask-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=arbitask -p 5432:5432 -d postgres:16
+```
+
+Then use `DATABASE_URL` and `DIRECT_URL` from [`.env.local.example`](.env.local.example) (same connection string for both is fine on a single Postgres instance).
 
 ### 1. Clone & install
 
@@ -165,26 +175,34 @@ NEXTAUTH_URL=http://localhost:3000
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
-# Database — SQLite for local dev (no setup needed)
-DATABASE_URL=file:./prisma/dev.db
+# Database — PostgreSQL (see .env.local.example for full list)
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/arbitask
+DIRECT_URL=postgresql://postgres:postgres@localhost:5432/arbitask
 ```
 
 > **Google OAuth setup:** Create a project at [console.cloud.google.com](https://console.cloud.google.com), enable the Google+ API, create OAuth 2.0 credentials, and add `http://localhost:3000/api/auth/callback/google` as an authorised redirect URI.
 >
 > Leave `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` empty to use **demo login only**.
 
-Also create `.env` (for the Prisma CLI):
+Also create `.env` (for the Prisma CLI — same URLs as `.env.local`):
 
 ```bash
-echo 'DATABASE_URL="file:./prisma/dev.db"' > .env
+cp .env.local.example .env
+# Edit .env: set DATABASE_URL and DIRECT_URL to match your Postgres (see example file)
 ```
 
 ### 3. Set up the database
 
+Apply migrations and generate the client (requires Postgres running and env vars set):
+
 ```bash
-npx prisma db push      # creates prisma/dev.db and applies the schema
-npx prisma generate     # generates the Prisma client
+npx prisma migrate dev    # applies prisma/migrations to your dev database
+npx prisma generate       # generates the Prisma client
 ```
+
+For a throwaway local database without migration history, you can use `npx prisma db push` instead of `migrate dev` — prefer **`migrate dev`** for day-to-day work so the schema stays in sync with committed migrations.
+
+**CI / production:** apply pending migrations with `npx prisma migrate deploy` (uses `DIRECT_URL` when set in `schema.prisma`).
 
 ### 4. Run the dev server
 
@@ -333,27 +351,18 @@ Visit the **Dashboard** to see your XP breakdown, level progress bar, and unlock
 
 ### Database
 
-Switch from SQLite to [Neon](https://neon.tech) (PostgreSQL, free tier):
+The app targets **PostgreSQL** everywhere. For production, use a managed provider ([Neon](https://neon.tech), Supabase, DigitalOcean Managed Database, etc.):
 
-1. Create a Neon project and copy the connection strings
-2. In `prisma/schema.prisma`, change the datasource:
-
-```prisma
-datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-```
-
-3. Update `.env.local`:
+1. Create a database and copy connection strings.
+2. Ensure [`prisma/schema.prisma`](prisma/schema.prisma) uses `postgresql` with `url` and `directUrl` (already configured in this repo).
+3. Set environment variables in your host (e.g. Vercel, DigitalOcean App Platform):
 
 ```env
-DATABASE_URL=postgres://...  # pooled connection (Neon)
-DIRECT_URL=postgres://...    # direct connection (for migrations)
+DATABASE_URL=postgresql://...   # pooled URL if your host provides one (e.g. Neon pooler)
+DIRECT_URL=postgresql://...     # direct connection for Prisma Migrate (non-pooler)
 ```
 
-4. Run `npx prisma migrate deploy`
+4. Run `npx prisma migrate deploy` in CI or your release step to apply [`prisma/migrations`](prisma/migrations).
 
 ### Deploy on Vercel
 

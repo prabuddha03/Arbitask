@@ -49,7 +49,11 @@ export const dbConfig = {
  * @returns Complete DATABASE_URL with connection pool parameters
  */
 export function buildDatabaseUrl(baseUrl?: string): string {
-  const url = baseUrl || process.env.DATABASE_URL || "file:./prisma/dev.db";
+  const url = baseUrl || process.env.DATABASE_URL || "";
+
+  if (!url) {
+    throw new Error("DATABASE_URL is required and must be a PostgreSQL connection string.");
+  }
 
   try {
     const urlObj = new URL(url);
@@ -58,7 +62,7 @@ export function buildDatabaseUrl(baseUrl?: string): string {
     urlObj.searchParams.set("connect_timeout", dbConfig.connectionTimeout.toString());
     return urlObj.toString();
   } catch {
-    // SQLite file:// URLs are not valid URL objects — return as-is
+    // If URL parsing fails, return original URL and let Prisma surface a precise error.
     return url;
   }
 }
@@ -68,13 +72,15 @@ export function buildDatabaseUrl(baseUrl?: string): string {
  */
 export function validateDbConfig(): void {
   if (!process.env.DATABASE_URL) {
-    // During Next.js build, DATABASE_URL may not be set — warn but don't crash
-    // The error will surface at runtime when an actual query is made
-    console.warn(
-      "⚠️  DATABASE_URL is not set. Using SQLite fallback (file:./prisma/dev.db). " +
-        "Set DATABASE_URL in .env.local for production."
+    throw new Error(
+      "DATABASE_URL is not set. Configure PostgreSQL DATABASE_URL in your environment."
     );
-    return;
+  }
+
+  if (!process.env.DIRECT_URL) {
+    throw new Error(
+      "DIRECT_URL is not set. Configure PostgreSQL DIRECT_URL in your environment (use the same URL as DATABASE_URL when not using a connection pooler)."
+    );
   }
 
   if (dbConfig.connectionLimit < 1) {

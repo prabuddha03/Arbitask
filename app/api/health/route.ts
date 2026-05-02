@@ -13,7 +13,7 @@
  *     description: |
  *       Returns the health status of all system components:
  *       - API server status
- *       - Database connectivity (Prisma → PostgreSQL/SQLite)
+ *       - Database connectivity (Prisma → PostgreSQL)
  *       - Response latency
  *       - Build metadata (version, environment, uptime)
  *

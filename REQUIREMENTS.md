@@ -276,7 +276,7 @@ The following features are **already implemented and working** on the `main` bra
 | Framework | Next.js 15, App Router, Server Actions, Server Components preferred |
 | Language | TypeScript 5 (strict mode) |
 | Auth | Auth.js v5 (Google OAuth + Credentials) |
-| Database | PostgreSQL via Prisma ORM (SQLite for local dev) |
+| Database | PostgreSQL via Prisma ORM (local and production) |
 | File Storage | Cloudflare R2 (attachments, documents, screen recordings) |
 | Deployment | DigitalOcean App Platform |
 | Error Tracking | Sentry (errors + performance) |
@@ -324,7 +324,7 @@ The following features are **already implemented and working** on the `main` bra
 3. **No tests at all** — zero unit, integration, or E2E tests exist
 4. **Inline CSS styles everywhere** — no CSS modules, no design system compliance; current UI uses warm orange theme with Outfit font, not the Mastercard-inspired DESIGN.md system
 5. **Legacy `/src/` directory** — contains old Vite SPA JSX files (`src/components/`, `src/constants/`, `src/utils/`, `src/styles/`); should be cleaned up or migrated
-6. **SQLite in dev but PostgreSQL-specific features needed** — current schema uses SQLite; need to ensure all features work with PostgreSQL
+6. **Postgres parity in dev** — use a real PostgreSQL instance locally (or Docker) so dev matches production; keep schema and queries portable to PostgreSQL only
 7. **No input sanitization** — markdown rendering could be XSS-vulnerable
 8. **No rate limiting** — auth and invite endpoints are unprotected
 9. **Hardcoded demo credentials in source** — `demo@arbitask.app` / `demo1234` is in `lib/auth.ts`

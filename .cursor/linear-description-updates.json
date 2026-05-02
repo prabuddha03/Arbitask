@@ -61,7 +61,7 @@
   },
   {
     "id": "TRI-20",
-    "description": "## Objective\n\nResolve SQLite-only assumptions and guarantee PostgreSQL-compatible behavior.\n\n## Acceptance Criteria\n\n* Audit schema and queries for PostgreSQL compatibility.\n* Validate migrations and runtime behavior under PostgreSQL.\n* Document any provider-specific constraints.\n\n## Relevant Files\n\n* `prisma/schema.prisma`\n* `lib/db.ts`\n* `src/modules/**/**/*.repository.ts`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-20/harden-postgresql-compatibility-in-development\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/16\n"
+    "description": "## Objective\n\nGuarantee PostgreSQL-first behavior across schema, migrations, and queries.\n\n## Acceptance Criteria\n\n* Audit schema and queries for PostgreSQL compatibility.\n* Validate migrations and runtime behavior under PostgreSQL.\n* Document any provider-specific constraints.\n\n## Relevant Files\n\n* `prisma/schema.prisma`\n* `lib/db.ts`\n* `src/modules/**/**/*.repository.ts`\n\nLinear Issue: https://linear.app/trial-0/issue/TRI-20/harden-postgresql-compatibility-in-development\n\nGitHub Issue: https://github.com/prabuddha03/Arbitask/issues/16\n"
   },
   {
     "id": "TRI-21",

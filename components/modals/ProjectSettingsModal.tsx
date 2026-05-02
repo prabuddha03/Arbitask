@@ -116,7 +116,7 @@ export function ProjectSettingsModal({
             onClick={async () => { setSaving(true); await onUpdate({ name, description: desc, iconId }); setSaving(false); }}
             disabled={!name.trim() || saving}
             size="lg"
-            style={{ width: "100%", justifyContent: "center" }}
+            fullWidth
           >
             {saving ? "Saving..." : "Save Changes"}
           </Btn>

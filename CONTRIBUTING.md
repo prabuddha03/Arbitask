@@ -67,13 +67,15 @@ npx vitest run --coverage
 
 ### 6. Database
 
+PostgreSQL is required for all environments. Set `DATABASE_URL` and `DIRECT_URL` in `.env.local` / `.env` (see [`.env.local.example`](.env.local.example)).
+
 ```bash
-# Local dev (SQLite)
-npx prisma db push
+# Preferred: apply migrations and generate client
+npx prisma migrate dev --name <feature_or_init>
 npx prisma generate
 
-# With migrations (PostgreSQL)
-npx prisma migrate dev --name <feature>
+# Optional: schema sync without migration files (throwaway DBs only)
+# npx prisma db push
 
 # View data
 npx prisma studio

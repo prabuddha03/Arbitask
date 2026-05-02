@@ -2,11 +2,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Dev: sqlite + file:./prisma/dev.db
-// Prod: change provider to "postgresql", add directUrl, restore @db.Text if needed
+// PostgreSQL for all environments
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ─── NextAuth required models ────────────────────────────────────────────────
